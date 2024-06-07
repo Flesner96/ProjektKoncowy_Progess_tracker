@@ -1,0 +1,259 @@
+{% extends 'base.html' %}
+{% block extra_head %}
+<style>
+    .past {
+        text-decoration: line-through;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<body>
+<div class="panel-body">
+    <h1>Event Schedule for <span id="currentDay"></span></h1>
+    <p>Current Time: <span id="currentTime"></span></p>
+</div>
+<div class="panel-body">
+    <table class="table table-striped table-condensed" id="scheduleTable">
+        <thead>
+        <tr>
+            <th style="width:20%">Time</th>
+            <th style="width:80%">Bosses</th>
+        </tr>
+        </thead>
+        <tbody id="bossScheduleBody"></tbody>
+    </table>
+</div>
+<script>
+    const schedules = {
+        "MONDAY": {
+            "1:00": ["Cursed Chest"],
+            "7:00": ["Cursed Chest"],
+            "9:00": ["Cursed Chest"],
+            "10:00": ["Cursed Boss"],
+            "11:00": ["Cursed Chest"],
+            "13:00": ["Cursed Chest"],
+            "13:30": ["Zombie Event"],
+            "14:00": ["Cursed Boss"],
+            "15:00": ["Cursed Chest"],
+            "17:00": ["Cursed Chest"],
+            "17:30": ["SnowBall Event"],
+            "18:00": ["Cursed Boss", "MrPunish"],
+            "18:15": ["The Pale"],
+            "19:00": ["Cursed Chest"],
+            "19:30": ["Wave Boss"],
+            "20:00": ["Ghazbaran"],
+            "20:15": ["Massacre"],
+            "20:30": ["Zombie Event", "Infernatil"],
+            "21:00": ["Cursed Chest", "Morpheus"],
+            "22:00": ["Cursed Boss"],
+            "23:00": ["Cursed Chest"],
+            "24:00": ["Cursed Boss"]
+        },
+        "TUESDAY": {
+            "1:00": ["Cursed Chest"],
+            "7:00": ["Cursed Chest"],
+            "9:00": ["Cursed Chest"],
+            "10:00": ["Cursed Boss"],
+            "11:00": ["Cursed Chest"],
+            "13:00": ["Cursed Chest"],
+            "13:30": ["Zombie Event"],
+            "14:00": ["Cursed Boss"],
+            "15:00": ["Cursed Chest"],
+            "17:00": ["Cursed Chest"],
+            "17:30": ["SnowBall Event"],
+            "18:00": ["Cursed Boss", "Demodras"],
+            "18:10": ["Terofar"],
+            "18:20": ["Lloyd"],
+            "18:30": ["The Old Widow"],
+            "19:00": ["Cursed Chest"],
+            "20:00": ["Omrafir"],
+            "20:30": ["Zombie Event", "Ferumbras"],
+            "20:45": ["The Scourge Of Oblivion"],
+            "21:00": ["Cursed Chest", "Apocalypse"],
+            "22:00": ["Cursed Boss"],
+            "23:00": ["Cursed Chest"],
+            "24:00": ["Cursed Boss"]
+        },
+        "WEDNESDAY": {
+            "1:00": ["Cursed Chest"],
+            "7:00": ["Cursed Chest"],
+            "9:00": ["Cursed Chest"],
+            "10:00": ["Cursed Boss"],
+            "11:00": ["Cursed Chest"],
+            "13:00": ["Cursed Chest"],
+            "13:30": ["Zombie Event"],
+            "14:00": ["Cursed Boss"],
+            "15:00": ["Cursed Chest"],
+            "17:00": ["Cursed Chest"],
+            "17:30": ["SnowBall Event"],
+            "18:00": ["Cursed Boss", "Gaz Haragoth"],
+            "18:15": ["The Welter"],
+            "18:30": ["Jaul"],
+            "19:00": ["Cursed Chest"],
+            "19:30": ["Wave Boss"],
+            "20:00": ["Bazir"],
+            "20:30": ["Zombie Event", "Morgaroth"],
+            "20:45": ["Devil"],
+            "21:00": ["Cursed Chest", "Verminor"],
+            "22:00": ["Cursed Boss"],
+            "23:00": ["Cursed Chest"],
+            "24:00": ["Cursed Boss"]
+        },
+        "THURSDAY": {
+            "1:00": ["Cursed Chest"],
+            "7:00": ["Cursed Chest"],
+            "9:00": ["Cursed Chest"],
+            "10:00": ["Cursed Boss"],
+            "11:00": ["Cursed Chest"],
+            "13:00": ["Cursed Chest"],
+            "13:30": ["Zombie Event"],
+            "14:00": ["Cursed Boss"],
+            "15:00": ["Cursed Chest"],
+            "17:00": ["Cursed Chest"],
+            "17:30": ["SnowBall Event"],
+            "18:00": ["Cursed Boss", "Omrafir"],
+            "18:15": ["King Zelos"],
+            "18:30": ["Demodras"],
+            "19:00": ["Cursed Chest"],
+            "20:00": ["Urmahlullu"],
+            "20:15": ["Orshabaal"],
+            "20:30": ["Zombie Event", "Ghazbaran"],
+            "20:45": ["Infernatil"],
+            "21:00": ["Cursed Chest", "Apocalypse"],
+            "22:00": ["Cursed Boss"],
+            "23:00": ["Cursed Chest"],
+            "24:00": ["Cursed Boss"]
+        },
+        "FRIDAY": {
+            "1:00": ["Cursed Chest"],
+            "7:00": ["Cursed Chest"],
+            "9:00": ["Cursed Chest"],
+            "10:00": ["Cursed Boss"],
+            "11:00": ["Cursed Chest"],
+            "13:00": ["Cursed Chest"],
+            "13:30": ["Zombie Event"],
+            "14:00": ["Cursed Boss"],
+            "15:00": ["Cursed Chest"],
+            "17:00": ["Cursed Chest"],
+            "17:30": ["SnowBall Event"],
+            "18:00": ["Cursed Boss", "MrPunish"],
+            "18:15": ["Massacre"],
+            "18:30": ["Bazir"],
+            "19:00": ["Cursed Chest"],
+            "19:30": ["Wave Boss"],
+            "20:00": ["Morgaroth"],
+            "20:15": ["The Pale Count"],
+            "20:30": ["Zombie Event", "TheDuke"],
+            "20:45": ["Ghazbaran"],
+            "21:00": ["Cursed Chest", "Infernatil"],
+            "22:00": ["Cursed Boss"],
+            "23:00": ["Cursed Chest"],
+            "24:00": ["Cursed Boss"]
+        },
+        "SATURDAY": {
+            "1:00": ["Cursed Chest"],
+            "7:00": ["Cursed Chest"],
+            "9:00": ["Cursed Chest"],
+            "10:00": ["Cursed Boss"],
+            "11:00": ["Cursed Chest"],
+            "13:00": ["Cursed Chest"],
+            "13:30": ["Zombie Event"],
+            "14:00": ["Cursed Boss"],
+            "15:00": ["Cursed Chest", "The Old Widow"],
+            "15:10": ["Terofar"],
+            "17:00": ["Cursed Chest", "The Scourge Of Oblivion"],
+            "17:10": ["Orshabaal"],
+            "17:30": ["SnowBall Event"],
+            "18:00": ["Cursed Boss"],
+            "19:00": ["Cursed Chest", "Gaz Haragoth"],
+            "19:15": ["Omrafir"],
+            "20:30": ["Zombie Event"],
+            "21:00": ["Cursed Chest", "Apocalypse"],
+            "21:15": ["Verminor"],
+            "21:30": ["Morpheus"],
+            "22:00": ["Cursed Boss"],
+            "23:00": ["Cursed Chest"],
+            "24:00": ["Cursed Boss"]
+        },
+        "SUNDAY": {
+            "1:00": ["Cursed Chest"],
+            "7:00": ["Cursed Chest"],
+            "9:00": ["Cursed Chest"],
+            "10:00": ["Cursed Boss"],
+            "11:00": ["Cursed Chest"],
+            "13:00": ["Cursed Chest"],
+            "13:30": ["Zombie Event"],
+            "14:00": ["Cursed Boss"],
+            "15:00": ["World Boss", "Cursed Chest", "The Old Widow"],
+            "15:10": ["Terofar"],
+            "17:00": ["Cursed Chest", "The Scourge Of Oblivion"],
+            "17:10": ["Ghazbaran"],
+            "17:30": ["SnowBall Event"],
+            "18:00": ["Cursed Boss"],
+            "19:00": ["Cursed Chest", "Gaz Haragoth"],
+            "19:15": ["Devil"],
+            "19:30": ["Wave Boss"],
+            "20:30": ["Zombie Event"],
+            "21:00": ["Cursed Chest", "Omrafir"],
+            "21:15": ["Apocalypse"],
+            "21:30": ["Verminor"],
+            "22:00": ["Cursed Boss"],
+            "23:00": ["Cursed Chest"],
+            "24:00": ["Cursed Boss"]
+        }
+    };
+
+
+    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+    function getScheduleForDay(day) {
+        return schedules[day.toUpperCase()];
+    }
+
+    function formatTime(timeString) {
+        const [hour, minute] = timeString.split(':');
+        const formattedHour = parseInt(hour) < 10 ? '0' + parseInt(hour) : hour;
+        const formattedMinute = parseInt(minute) < 10 ? '0' + parseInt(minute) : minute;
+        return formattedHour + ':' + formattedMinute;
+    }
+
+    function updateSchedule() {
+        const currentDate = new Date();
+        const currentDay = daysOfWeek[currentDate.getDay()];
+        const currentHour = currentDate.getHours();
+        const currentMinute = currentDate.getMinutes();
+
+        document.getElementById('currentDay').textContent = currentDay;
+        document.getElementById('currentTime').textContent = `${currentHour}:${currentMinute < 10 ? '0' + currentMinute : currentMinute}`;
+
+        const bossScheduleBody = document.getElementById('bossScheduleBody');
+        bossScheduleBody.innerHTML = '';
+
+        const bosses = schedules[currentDay.toUpperCase()];
+
+        Object.keys(bosses).forEach(time => {
+            const formattedTime = formatTime(time);
+
+            const row = document.createElement('tr');
+            const timeCell = document.createElement('td');
+            const bossCell = document.createElement('td');
+
+            if (formattedTime < formatTime(`${currentHour}:${currentMinute}`)) {
+                timeCell.classList.add('past');
+                bossCell.classList.add('past');
+            }
+
+            timeCell.textContent = formattedTime;
+            bossCell.textContent = bosses[time].join(', ');
+
+            row.appendChild(timeCell);
+            row.appendChild(bossCell);
+            bossScheduleBody.appendChild(row);
+        });
+    }
+
+    updateSchedule();
+    setInterval(updateSchedule, 30000);
+</script>
+</body>
+{% endblock %}

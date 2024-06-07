@@ -1,0 +1,34 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    
+    {% block extra_head %}
+    {% endblock %}
+</head>
+<body>
+    <div class="margin left"></div>
+    <div class="center">
+        <div>
+            <ul>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Giveria <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'events' %}">Events</a></li>
+                        <li><a href="{% url 'bosses' %}">Bosses</a></li>
+                    </ul>
+                </li>
+                
+            </ul>
+        </div>
+        <div>
+                {% block content %}
+                {% endblock %}
+        </div>
+    </div>
+    <div class="margin right"></div>
+
+</body>
+</html>

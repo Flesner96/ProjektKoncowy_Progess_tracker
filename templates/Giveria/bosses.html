@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block content %}
+<body>
+<h1>Bosses</h1>
+<form action="#" method="post" id="bossForm">
+    <label for="datetime">Select date and hour:</label>
+    <input type="datetime-local" class="form-control" id="datetime" name="datetime"><br><br>
+
+    <label for="boss">Select Boss:</label>
+    <select id="boss" name="boss">
+        <option value="Lost Brain">Lost Brain</option>
+        <option value="Galactus">Galactus</option>
+        <option value="Feomathar">Feomathar</option>
+        <option value="Finkregh">Finkregh</option>
+        <option value="Parandor">Parandor</option>
+        <option value="Pedrakhan">Pedrakhan</option>
+        <option value="Incarnation of Belial">Incarnation of Belial</option>
+        <option value="Lokhi">Lokhi</option>
+        <option value="Fenir">Fenir</option>
+        <option value="Surthur">Surthur</option>
+        <option value="Helah">Helah</option>
+        <option value="Demorio">Demorio</option>
+        <option value="Random Boss Hero Island">Random Boss Hero Island</option>
+    </select><br><br>
+
+    <input type="submit" value="Submit">
+</form>
+<script>
+    const cooldowns20h = {
+        "Lost Brain": 20,
+        "Galactus": 20,
+        "Feomathar": 20,
+        "Finkregh": 20,
+        "Parandor": 20,
+        "Pedrakhan": 20,
+        "Lokhi": 20,
+        "Fenir": 20,
+        "Surthur": 20,
+        "Helah": 20,
+        "Demorio": 20
+    };
+
+    const cooldowns72h = {
+        "Incarnation of Belial": 72,
+        "Random Boss Hero Island": 72
+    };
+function calculateNextBossFightTime() {
+    const selectedDateTime = new Date(document.getElementById('datetime').value);
+    const selectedBoss = document.getElementById('boss').value;
+
+    if (isNaN(selectedDateTime.getTime())) {
+        alert('Please select proper data and hour.');
+        return;
+    }
+
+    if (selectedBoss === '') {
+        alert('Please select Boss.');
+        return;
+    }
+
+    const cooldowns = (cooldowns20h[selectedBoss] !== undefined) ? cooldowns20h : cooldowns72h;
+
+    const cooldownHours = cooldowns[selectedBoss];
+    const nextFightTime = new Date(selectedDateTime.getTime() + cooldownHours * 60 * 60 * 1000);
+
+    alert(`Next fight with boss ${selectedBoss} will be available on ${nextFightTime.toLocaleString()}.`);
+}
+
+document.getElementById('bossForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    calculateNextBossFightTime();
+});
+</script>
+</body>
+{% endblock %}
