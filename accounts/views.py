@@ -21,7 +21,7 @@ class CreateUserView(View):
             return redirect('base')
         return render(request, "accounts/create_user.html", {"error": "Passwords do not match"})
 
-# Create your views here.
+
 class LoginView(View):
     def get(self, request):
         return render(request, "accounts/login.html")
@@ -32,11 +32,11 @@ class LoginView(View):
 
         user = authenticate(username=username, password=password)
         if user is not None:
-            redirect_url = request.GET.get('next', 'base')
             login(request, user)
+            redirect_url = request.GET.get('next', 'dashboard')
             return redirect(redirect_url)
         else:
-            return redirect('login')
+            return render(request, "accounts/login.html", {'error': 'Invalid username or password'})
 
 class LogoutView(View):
     def get(self, request):
