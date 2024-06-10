@@ -14,6 +14,10 @@ class Quest(models.Model):
     description = models.TextField()
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
 
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('quest_detail', kwargs={'pk': self.pk})
+
     def __str__(self):
         return self.name
 

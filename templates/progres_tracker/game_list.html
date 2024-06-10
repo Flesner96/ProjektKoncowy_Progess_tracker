@@ -3,10 +3,9 @@
     <h2>Game List</h2>
     
     {% for game in games %}
-        <h3 style="display: block;"><a href="{% url 'game_detail' game.id %}">{{ game.name }}</a></h3>
-        <form action="{% url 'delete_game' game.id %}" method="POST" style="display: block;">
-            {% csrf_token %}
-            <input type="button" value="X">
-        </form>
+        <h3 style="display: block;">
+            <a href="{% url 'game_detail' game.id %}">{{ game.name }}</a>
+            <a href="{% url 'delete_game' game.id %}" style="color: red; margin-left: 10px;">Remove</a>
+        </h3>
     {% endfor %}
 {% endblock content %}

@@ -6,9 +6,9 @@
     {% csrf_token %}
     {{ form.as_p }}
      <div class="alert alert-warning">
-        <strong>Warning!</strong> Are you sure you want to delete "{{ quest.name }}"? This action cannot be undone.
+        <strong>Warning!</strong> Are you sure you want to delete "{{ game.name }}"? This action cannot be undone.
     </div>
     <button type="submit" class="btn btn-danger">Yes, delete</button>
-    <a class="btn btn-secondary" href="{% url 'quests:index' %}">No, take me back</a>
+    <a class="btn btn-secondary" href="{% url 'game_list' %}">No, take me back</a>
 </form>
 {% endblock %}
