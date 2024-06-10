@@ -1,4 +1,3 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
@@ -11,14 +10,13 @@ from .models import Game, Quest, CharacterQuestProgress, Character, Comment, Que
 from .forms import GameForm, QuestForm, CharacterForm, QuestStepForm, CommentForm, CharacterQuestProgressForm
 from .utils import is_superuser
 
+
 # Create your views here.
 
-
-
+@method_decorator(login_required, name='dispatch')
 class DashboardView(View):
     def get(self, request):
         return render(request, 'dashboard.html')
-
 
     def post(self, request):
         if request.user.is_authenticated:
