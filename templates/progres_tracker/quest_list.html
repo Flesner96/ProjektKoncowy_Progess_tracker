@@ -1,0 +1,33 @@
+{% extends 'dashboard.html' %}
+
+{% load static %}
+
+{% block content %}
+<h1>Quest List</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>Quest ID</th>
+        <th>Quest Name</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for quest in quest_list %}
+    <tr>
+        <td>{{ quest.id }}</td>
+        <td>{{ quest.name }}</td>
+        <td>
+            <a href="{{ quest.get_absolute_url }}">View</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="3">No quests found.</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+    
+{% endblock %}

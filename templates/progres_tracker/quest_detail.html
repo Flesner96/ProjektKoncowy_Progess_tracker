@@ -1,0 +1,12 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+<h1>{{ quest.title }}</h1>
+<p>{{ quest.description }}</p>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>
+{% endblock %}

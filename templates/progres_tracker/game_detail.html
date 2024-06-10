@@ -1,0 +1,21 @@
+{% extends "dashboard.html" %}
+
+{% load static %}
+
+{% block content %}
+<h1>{{ game.title }}</h1>
+
+<p>{{ game.description }}</p>
+
+<p>Genre: {{ game.genre }}</p>
+
+<p>Release Date: {{ game.release_date }}</p>
+
+<p>Developer: {{ game.developer }}</p>
+
+<p>Rating: {{ game.rating }}</p>
+
+{% if game.cover_image %}
+<img src="{{ game.cover_image.url }}" alt="{{ game.title }}">
+{% endif %}
+{% endblock %}

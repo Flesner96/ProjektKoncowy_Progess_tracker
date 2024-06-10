@@ -1,0 +1,12 @@
+{% extends 'dashboard.html' %}
+{% block content %}
+<h2>Character details: {{ character.name }}</h2>
+<p>Name: {{ character.name }}</p>
+<p>Profession: {{ character.profession }}</p>
+<p>Game: {{ character.game }}</p>
+<p>User: {{ character.user }}</p>
+    
+    <a href="{% url 'character_list' %}">
+        <button type="button">Back</button>
+    </a>
+{% endblock %}

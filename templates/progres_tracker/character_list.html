@@ -1,0 +1,17 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+<h2>Character list</h2>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Game</th>
+    </tr>
+    {% for character in characters %}
+    <tr>
+        <td><a href="{% url 'character_detail' character.id %}">{{ character.name }}</a></td>
+        <td>{{ character.game }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

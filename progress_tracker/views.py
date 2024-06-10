@@ -34,7 +34,7 @@ class CreateGameView(CreateView):
     model = Game
     form_class = GameForm
     template_name = 'progres_tracker/add_game.html'
-    success_url = '/games/'
+    success_url = reverse_lazy('game_list')
 
 
 @method_decorator(user_passes_test(is_superuser), name='dispatch')
@@ -42,7 +42,7 @@ class UpdateGameView(UpdateView):
     model = Game
     form_class = GameForm
     template_name = 'progres_tracker/edit_game.html'
-    success_url = '/games/'
+    success_url = reverse_lazy('game_list')
 
 
 @method_decorator(user_passes_test(is_superuser), name='dispatch')
@@ -50,7 +50,7 @@ class CreateQuestView(CreateView):
     model = Quest
     form_class = QuestForm
     template_name = 'progres_tracker/add_quest.html'
-    success_url = '/quests/'
+    success_url = reverse_lazy('quest_list')
 
 
 @method_decorator(user_passes_test(is_superuser), name='dispatch')
@@ -58,7 +58,7 @@ class UpdateQuestView(UpdateView):
     model = Quest
     form_class = QuestForm
     template_name = 'progres_tracker/edit_quest.html'
-    success_url = '/quests/'
+    success_url = reverse_lazy('quest_list')
 
 
 @method_decorator(login_required, name='dispatch')
@@ -66,7 +66,7 @@ class CreateCharacterView(CreateView):
     model = Character
     form_class = CharacterForm
     template_name = 'progres_tracker/add_character.html'
-    success_url = '/characters/'
+    success_url = reverse_lazy('character_list')
 
 
 @method_decorator(login_required, name='dispatch')
@@ -74,14 +74,15 @@ class UpdateCharacterView(UpdateView):
     model = Character
     form_class = CharacterForm
     template_name = 'progres_tracker/edit_character.html'
-    success_url = '/characters/'
+    success_url = reverse_lazy('character_list')
 
 
 @method_decorator(login_required, name='dispatch')
 class QuestListView(ListView):
     model = Quest
     template_name = 'progres_tracker/quest_list.html'
-    context_object_name = 'quests'
+    context_object_name = 'quest_list'
+
 
 
 @method_decorator(login_required, name='dispatch')
@@ -100,7 +101,7 @@ class QuestDetailView(DetailView):
 class QuestDeleteView(DeleteView):
     model = Quest
     template_name = 'progres_tracker/quest_confirm_delete.html'
-    success_url = reverse_lazy('quest-list')
+    success_url = reverse_lazy('quest_list')
 
 
 @method_decorator(login_required, name='dispatch')
@@ -123,7 +124,7 @@ class UpdateQuestStepView(UpdateView):
 class GameDeleteView(DeleteView):
     model = Game
     template_name = 'progres_tracker/game_confirm_delete.html'
-    success_url = reverse_lazy('game-list')
+    success_url = reverse_lazy('game_list')
 
 
 class GameListView(ListView):
@@ -137,13 +138,16 @@ class GameDetailView(DetailView):
     template_name = 'progres_tracker/game_detail.html'
     context_object_name = 'game'
 
+def CharacterListView(request):
+    characters = Character.objects.all()
+    return render(request, 'progres_tracker/character_list.html', {'characters': characters})
 
 @method_decorator(login_required, name='dispatch')
 class CharacterQuestProgressCreateView(CreateView):
     model = CharacterQuestProgress
     form_class = CharacterQuestProgressForm
     template_name = 'progres_tracker/characterquestprogress_form.html'
-    success_url = reverse_lazy('quest-list')
+    success_url = reverse_lazy('quest_list')
 
 
 @method_decorator(login_required, name='dispatch')
@@ -151,8 +155,12 @@ class CharacterQuestProgressUpdateView(UpdateView):
     model = CharacterQuestProgress
     form_class = CharacterQuestProgressForm
     template_name = 'progres_tracker/characterquestprogress_form.html'
-    success_url = reverse_lazy('quest-list')
+    success_url = reverse_lazy('quest_list')
 
+class CharacterDetailView(View):
+    def get(self, request, *args, **kwargs):
+        character = Character.objects.get(pk=kwargs['id'])
+        return render(request, 'character_detail.html', {'character': character})
 
 @method_decorator(login_required, name='dispatch')
 class CreateCommentView(CreateView):

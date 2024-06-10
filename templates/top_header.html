@@ -1,15 +1,9 @@
 <div class="topnav">
     <div class="nav-left">
-        <ul>
-            <li class="dropdown">
-                <label for="toggle" class="dropdown-toggle">Giveria</label>
-                <input type="checkbox" id="toggle" class="dropdown-toggle">
-                <ul class="dropdown-menu">
-                    <li><a href="{% url 'events' %}">Events</a></li>
-                    <li><a href="{% url 'bosses' %}">Bosses</a></li>
-                </ul>
-            </li>
-        </ul>
+        <a href="{% url 'dashboard' %}">Home</a>
+    </div>
+    <div class="nav-center">
+        Search:
     </div>
     <div class="nav-right">
         {% if user.is_authenticated %}
