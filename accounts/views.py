@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.views import View
-
+from django.contrib import messages
 
 class CreateUserView(View):
 
@@ -17,6 +17,7 @@ class CreateUserView(View):
             u = User(username=username)
             u.set_password(password)
             u.save()
+            messages.success(request, 'Successfully created user')
             return redirect('base')
         return render(request, "accounts/create_user.html", {"error": "Passwords do not match"})
 
