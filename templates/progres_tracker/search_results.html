@@ -1,0 +1,16 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+<h2>Search results</h2>
+{% if quests %}
+<ul>
+    {% for quest in quest_list %}
+    {% if search_input in quest.name %}
+    <li>{{ quest.name }}</li>
+    {% endif %}
+    {% endfor %}
+</ul>
+{% else %}
+<p>No quests found.</p>
+{% endif %}
+{% endblock %}

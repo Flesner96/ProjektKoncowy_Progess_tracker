@@ -1,10 +1,12 @@
 {% extends "dashboard.html" %}
 {% load static %}
 {% block content %}
+    {% include "top_header.html" %}
 <h2>Add Character</h2>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+    <a href="{% url 'dashboard' %}" class="btn btn-default">Back</a>
 {% endblock content %}

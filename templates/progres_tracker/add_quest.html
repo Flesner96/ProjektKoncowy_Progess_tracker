@@ -1,10 +1,12 @@
 {% extends "dashboard.html" %}
 
 {% block content %}
+    {% include "top_header.html" %}
 <h2>Add Quest</h2>
 <form method="POST">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Submit</button>
 </form>
+    <a href="{% url 'dashboard' %}" class="btn btn-default">Back</a>
 {% endblock %}

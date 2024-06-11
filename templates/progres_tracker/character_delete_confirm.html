@@ -2,14 +2,14 @@
 
 {% block content %}
     {% include "top_header.html" %}
-<h2>Delete Quest</h2>
+<h2>Delete Character</h2>
 <form method="POST">
     {% csrf_token %}
     {{ form.as_p }}
     <div class="alert alert-warning">
-        <strong>Warning!</strong> Are you sure you want to delete "{{ quest.name }}"? This action cannot be undone.
+        <strong>Warning!</strong> Are you sure you want to delete your character? This action cannot be undone.
     </div>
     <button type="submit" class="btn btn-danger">Yes, delete</button>
-    <a class="btn btn-secondary" href="{% url 'quest_list' %}">No, take me back</a>
+    <a class="btn btn-secondary" href="{% url 'character_list' %}">No, take me back</a>
 </form>
 {% endblock %}

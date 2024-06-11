@@ -1,11 +1,24 @@
 {% extends 'dashboard.html' %}
 {% block content %}
+    {% include "top_header.html" %}
     <h2>Game List</h2>
-    
+    <table>
+    <thead>
+        <tr>
+            <th>Game Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
     {% for game in games %}
-        <h3 style="display: block;">
-            <a href="{% url 'game_detail' game.id %}">{{ game.name }}</a>
-            <a href="{% url 'delete_game' game.id %}" style="color: red; margin-left: 10px;">Remove</a>
-        </h3>
-    {% endfor %}
+        <tr>
+            <td>
+                <a href="{% url 'game_detail' game.id %}">{{ game.name }}</a>
+            </td>
+            <td><a href="{% url 'delete_game' game.id %}">Remove</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+    <a href="{% url 'dashboard' %}" class="btn btn-default">Back</a>
 {% endblock content %}

@@ -4,7 +4,7 @@ from progress_tracker import views
 from progress_tracker.views import DashboardView, search_quests, GameListView, GameDetailView, CreateGameView, \
     UpdateGameView, GameDeleteView, CharacterQuestProgressUpdateView, CharacterQuestProgressCreateView, QuestListView, \
     QuestDeleteView, UpdateQuestView, CreateQuestView, CreateCharacterView, CreateCommentView, QuestDetailView, \
-    CharacterListView, CharacterDetailView
+    CharacterListView, CharacterDetailView, CreateQuestStepView
 
 urlpatterns = [
 
@@ -27,6 +27,8 @@ urlpatterns = [
     path('games/edit/<int:pk>/', UpdateGameView.as_view(), name='edit_game'),
     path('games/delete/<int:pk>/', GameDeleteView.as_view(), name='delete_game'),
     path('character_list/', CharacterListView, name='character_list'),
+    path('character_delete/<int:id>/', views.character_delete, name="character_delete"),
     path('events/', views.EventsView, name='events'),
     path('bosses/', views.BossesView, name='bosses'),
+    path('add_step/', CreateQuestStepView.as_view(), name='add_quest_step'),
 ]

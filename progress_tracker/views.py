@@ -1,8 +1,9 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils.decorators import method_decorator
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views import View
 from django.views.generic import CreateView, UpdateView, ListView, DetailView, DeleteView
@@ -61,12 +62,15 @@ class UpdateQuestView(UpdateView):
     success_url = reverse_lazy('quest_list')
 
 
-@method_decorator(login_required, name='dispatch')
-class CreateCharacterView(CreateView):
-    model = Character
+class CreateCharacterView(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
     form_class = CharacterForm
     template_name = 'progres_tracker/add_character.html'
     success_url = reverse_lazy('character_list')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -77,12 +81,26 @@ class UpdateCharacterView(UpdateView):
     success_url = reverse_lazy('character_list')
 
 
+@login_required
+def character_delete(request, id):
+    char_to_delete = get_object_or_404(Character, id=id)
+
+    if char_to_delete.user != request.user:
+        context = {'error': "You do not have permission to delete this character."}
+        return render(request, 'progres_tracker/character_detail.html', context)
+
+    if request.method == 'POST':
+        char_to_delete.delete()
+        return HttpResponseRedirect(reverse('character_list'))
+
+    return render(request, 'progres_tracker/character_delete_confirm.html', {'char': char_to_delete})
+
+
 @method_decorator(login_required, name='dispatch')
 class QuestListView(ListView):
     model = Quest
     template_name = 'progres_tracker/quest_list.html'
     context_object_name = 'quest_list'
-
 
 
 @method_decorator(login_required, name='dispatch')
@@ -94,7 +112,9 @@ class QuestDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['comments'] = Comment.objects.filter(quest=self.object)
+        context['quest_steps'] = QuestStep.objects.filter(quest=self.object)
         return context
+
 
 
 @method_decorator(user_passes_test(is_superuser), name='dispatch')
@@ -109,7 +129,7 @@ class CreateQuestStepView(CreateView):
     model = QuestStep
     form_class = QuestStepForm
     template_name = 'progres_tracker/add_quest_step.html'
-    success_url = '/queststeps/'
+    success_url = reverse_lazy('quest_list')
 
 
 @method_decorator(login_required, name='dispatch')
@@ -117,7 +137,7 @@ class UpdateQuestStepView(UpdateView):
     model = QuestStep
     form_class = QuestStepForm
     template_name = 'progres_tracker/edit_quest_step.html'
-    success_url = '/queststeps/'
+    success_url = reverse_lazy('quest_list')
 
 
 @method_decorator(user_passes_test(is_superuser), name='dispatch')
@@ -138,9 +158,11 @@ class GameDetailView(DetailView):
     template_name = 'progres_tracker/game_detail.html'
     context_object_name = 'game'
 
+
 def CharacterListView(request):
     characters = Character.objects.all()
     return render(request, 'progres_tracker/character_list.html', {'characters': characters})
+
 
 @method_decorator(login_required, name='dispatch')
 class CharacterQuestProgressCreateView(CreateView):
@@ -157,10 +179,12 @@ class CharacterQuestProgressUpdateView(UpdateView):
     template_name = 'progres_tracker/characterquestprogress_form.html'
     success_url = reverse_lazy('quest_list')
 
+
 class CharacterDetailView(View):
     def get(self, request, *args, **kwargs):
         character = Character.objects.get(pk=kwargs['id'])
-        return render(request, 'character_detail.html', {'character': character})
+        return render(request, 'progres_tracker/character_detail.html', {'character': character})
+
 
 @method_decorator(login_required, name='dispatch')
 class CreateCommentView(CreateView):

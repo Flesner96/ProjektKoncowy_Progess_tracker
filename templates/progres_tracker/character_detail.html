@@ -1,0 +1,20 @@
+{% extends 'dashboard.html' %}
+{% block content %}
+    {% include "top_header.html" %}
+<h2>Character details: {{ character.name }}</h2>
+<p>Name: {{ character.name }}</p>
+<p>Profession: {{ character.profession }}</p>
+<p>Game: {{ character.game }}</p>
+<p>User: {{ character.user }}</p>
+{% if error %}
+    <script>
+        alert('{{ error }}');
+    </script>
+{% endif %}
+
+<a href="{% url 'character_delete' character.id %}">Remove</a>
+
+<a href="{% url 'character_list' %}">
+    <button type="button">Back</button>
+</a>
+{% endblock %}

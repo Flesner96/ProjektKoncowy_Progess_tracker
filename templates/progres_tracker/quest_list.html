@@ -1,7 +1,12 @@
-    {% extends 'dashboard.html' %}
-    {% load static %}
-    {% block content %}
+{% extends 'dashboard.html' %}
+{% load static %}
+{% block content %}
+    {% include "top_header.html" %}
     <h1>Quest List</h1>
+    <form action="{% url 'search_quests' %}" method="get">
+        <input type="text" name="q" placeholder="Search quests...">
+        <input type="submit" value="Search">
+    </form>
     <table>
         <thead>
         <tr>
@@ -12,23 +17,23 @@
         </thead>
         <tbody>
         {% for quest in quest_list %}
-        <tr>
-            <td>{{ quest.id }}</td>
-            <td>{{ quest.name }}</td>
-            <td>
-                <a href="{{ quest.get_absolute_url }}">View</a>
-                {% if user.is_superuser %}
-                    <a href="{% url 'edit_quest' quest.id %}">Edit</a>
-                    <a href="{% url 'delete_quest' quest.id %}">Delete</a>
-                {% endif %}
-            </td>
-        </tr>
+            <tr>
+                <td>{{ quest.id }}</td>
+                <td>{{ quest.name }}</td>
+                <td>
+                    <a href="{{ quest.get_absolute_url }}">View</a>
+                    {% if user.is_superuser %}
+                        <a href="{% url 'edit_quest' quest.id %}">Edit</a>
+                        <a href="{% url 'delete_quest' quest.id %}">Delete</a>
+                    {% endif %}
+                </td>
+            </tr>
         {% empty %}
-        <tr>
-            <td colspan="3">No quests found.</td>
-        </tr>
+            <tr>
+                <td colspan="3">No quests found.</td>
+            </tr>
         {% endfor %}
         </tbody>
     </table>
-        
-    {% endblock %}
+<a href="{% url 'dashboard' %}" class="btn btn-default">Back</a>
+{% endblock %}
