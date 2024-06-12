@@ -1,14 +1,16 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
+from django.forms import modelformset_factory
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views import View
 from django.views.generic import CreateView, UpdateView, ListView, DetailView, DeleteView
-from .models import Game, Quest, CharacterQuestProgress, Character, Comment, QuestStep
-from .forms import GameForm, QuestForm, CharacterForm, QuestStepForm, CommentForm, CharacterQuestProgressForm
+from .models import Game, Quest, CharacterQuestProgress, Character, Comment, QuestStep, CharacterQuestStepProgress
+from .forms import GameForm, QuestForm, CharacterForm, QuestStepForm, CommentForm, CharacterQuestProgressForm, \
+ CharacterQuestStepProgressForm
 from .utils import is_superuser
 
 
@@ -116,35 +118,11 @@ class QuestDetailView(DetailView):
         return context
 
 
-
 @method_decorator(user_passes_test(is_superuser), name='dispatch')
 class QuestDeleteView(DeleteView):
     model = Quest
     template_name = 'progres_tracker/quest_confirm_delete.html'
     success_url = reverse_lazy('quest_list')
-
-
-@method_decorator(login_required, name='dispatch')
-class CreateQuestStepView(CreateView):
-    model = QuestStep
-    form_class = QuestStepForm
-    template_name = 'progres_tracker/add_quest_step.html'
-    success_url = reverse_lazy('quest_list')
-
-
-@method_decorator(login_required, name='dispatch')
-class UpdateQuestStepView(UpdateView):
-    model = QuestStep
-    form_class = QuestStepForm
-    template_name = 'progres_tracker/edit_quest_step.html'
-    success_url = reverse_lazy('quest_list')
-
-
-@method_decorator(user_passes_test(is_superuser), name='dispatch')
-class GameDeleteView(DeleteView):
-    model = Game
-    template_name = 'progres_tracker/game_confirm_delete.html'
-    success_url = reverse_lazy('game_list')
 
 
 class GameListView(ListView):
@@ -159,25 +137,16 @@ class GameDetailView(DetailView):
     context_object_name = 'game'
 
 
+@method_decorator(user_passes_test(is_superuser), name='dispatch')
+class GameDeleteView(DeleteView):
+    model = Game
+    template_name = 'progres_tracker/game_confirm_delete.html'
+    success_url = reverse_lazy('game_list')
+
+
 def CharacterListView(request):
     characters = Character.objects.all()
     return render(request, 'progres_tracker/character_list.html', {'characters': characters})
-
-
-@method_decorator(login_required, name='dispatch')
-class CharacterQuestProgressCreateView(CreateView):
-    model = CharacterQuestProgress
-    form_class = CharacterQuestProgressForm
-    template_name = 'progres_tracker/characterquestprogress_form.html'
-    success_url = reverse_lazy('quest_list')
-
-
-@method_decorator(login_required, name='dispatch')
-class CharacterQuestProgressUpdateView(UpdateView):
-    model = CharacterQuestProgress
-    form_class = CharacterQuestProgressForm
-    template_name = 'progres_tracker/characterquestprogress_form.html'
-    success_url = reverse_lazy('quest_list')
 
 
 class CharacterDetailView(View):
@@ -194,8 +163,13 @@ class CreateCommentView(CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        form.instance.quest = get_object_or_404(Quest, id=self.kwargs['quest_id'])
+        form.instance.quest = get_object_or_404(Quest, id=self.kwargs['pk'])
         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['action_text'] = "Add Comment"
+        return context
 
     def get_success_url(self):
         return self.object.quest.get_absolute_url()
@@ -217,3 +191,103 @@ def EventsView(request):
 
 def BossesView(request):
     return render(request, 'Giveria/bosses.html')
+
+
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Comment
+    fields = ['content']
+    template_name = 'progres_tracker/add_comment.html'
+
+    def form_valid(self, form):
+        return super().form_valid(form)
+
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.user
+
+    def get_success_url(self):
+        return reverse('quest-detail', kwargs={'pk': self.object.quest.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['action_text'] = "Edit Comment"
+        return context
+
+
+@method_decorator(user_passes_test(is_superuser), name='dispatch')
+class CreateQuestStepView(CreateView):
+    model = QuestStep
+    form_class = QuestStepForm
+    template_name = 'progres_tracker/add_quest_step.html'
+    success_url = reverse_lazy('add_quest_step')
+
+
+@method_decorator(login_required, name='dispatch')
+class CharacterQuestProgressCreateView(CreateView):
+    model = CharacterQuestProgress
+    form_class = CharacterQuestProgressForm
+    template_name = 'progres_tracker/characterquestprogress_form.html'
+    success_url = reverse_lazy('quest_list')
+
+
+@method_decorator(login_required, name='dispatch')
+class CharacterQuestProgressUpdateView(UpdateView):
+    model = CharacterQuestProgress
+    form_class = CharacterQuestProgressForm
+    template_name = 'progres_tracker/characterquestprogress_form.html'
+    success_url = reverse_lazy('quest_list')
+
+
+
+@method_decorator(login_required, name='dispatch')
+class CharacterQuestStepProgressCreateView(CreateView):
+    model = CharacterQuestStepProgress
+    form_class = CharacterQuestStepProgressForm
+    template_name = 'progres_tracker/characterqueststepprogress_form.html'
+    success_url = reverse_lazy('dashboard')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        character_id = self.kwargs.get('character_id')
+        character = get_object_or_404(Character, id=character_id)
+        kwargs['initial']['character'] = character
+        return kwargs
+
+    def form_valid(self, form):
+        character_id = self.kwargs.get('character_id')
+        character = get_object_or_404(Character, id=character_id)
+        form.instance.character = character
+        return super().form_valid(form)
+
+
+@method_decorator(login_required, name='dispatch')
+class CharacterQuestProgressManageView(View):
+    def get(self, request, character_id):
+        character = get_object_or_404(Character, pk=character_id)
+        quests = Quest.objects.filter(game=character.game).distinct()
+
+        # Initialize progress_dict to keep track of completion status
+        progress_dict = {}
+        for quest in quests:
+            for step in quest.queststep_set.all():
+                progress = CharacterQuestStepProgress.objects.filter(character=character, quest_step=step).first()
+                progress_dict[step.id] = progress.completed if progress else False
+
+        return render(request, 'progres_tracker/character_progress_manage.html', {
+            'character': character,
+            'quests': quests,
+            'progress_dict': progress_dict
+        })
+
+    def post(self, request, character_id):
+        character = get_object_or_404(Character, pk=character_id)
+        quest_steps = QuestStep.objects.filter(quest__game=character.game)
+
+        # Update progress based on POST data
+        for step in quest_steps:
+            completed = request.POST.get(f'completed_{step.id}', 'off') == 'on'
+            progress, created = CharacterQuestStepProgress.objects.get_or_create(character=character, quest_step=step)
+            progress.completed = completed
+            progress.save()
+
+        return redirect('character-progress-manage', character_id=character.id)

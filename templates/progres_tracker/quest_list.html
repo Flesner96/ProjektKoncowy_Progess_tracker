@@ -10,18 +10,18 @@
     <table>
         <thead>
         <tr>
-            <th>Quest ID</th>
             <th>Quest Name</th>
+            <th>Game</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
         {% for quest in quest_list %}
             <tr>
-                <td>{{ quest.id }}</td>
                 <td>{{ quest.name }}</td>
+                <td>{{ quest.game }}</td>
                 <td>
-                    <a href="{{ quest.get_absolute_url }}">View</a>
+                     <a href="{% url 'quest_detail' quest.id %}">View</a>
                     {% if user.is_superuser %}
                         <a href="{% url 'edit_quest' quest.id %}">Edit</a>
                         <a href="{% url 'delete_quest' quest.id %}">Delete</a>

@@ -96,12 +96,6 @@
                     <span class="title">Lista Questów</span>
                 </a>
             </div>
-            <div class="menu-item border-dashed">
-                <a href="{% url 'add_characterquestprogress' %}">
-                    <i class="far fa-plus-square icon-plus-square"></i>
-                    <span class="title">Dodaj progres</span>
-                </a>
-            </div>
         </div>
         {% if request.user.is_superuser %}
             <div>
@@ -110,6 +104,12 @@
                         <a href="{% url 'add_quest' %}">
                             <i class="far fa-plus-square icon-plus-square"></i>
                             <span class="title">Dodaj quest</span>
+                        </a>
+                    </div>
+                    <div class="menu-item border-dashed">
+                        <a href="{% url 'add_quest_step' %}">
+                            <i class="far fa-plus-square icon-plus-square"></i>
+                            <span class="title">Dodaj queststep</span>
                         </a>
                     </div>
                     <div class="menu-item border-dashed">

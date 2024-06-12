@@ -7,5 +7,6 @@
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="save btn btn-default">Add</button>
+    <a href="{% url 'dashboard' %}" class="btn btn-default">Back</a>
 </form>
 {% endblock %}

@@ -98,3 +98,21 @@ body {
 .dropdown-toggle:checked + .dropdown-menu {
     display: block;
 }
+button[type="submit"] {
+    background-color: #04AA6D; /* your desirable color for the background */
+    color: white; /* your desirable color for the text */
+    padding: 10px 20px; /* size of the button */
+    border: none; /* removes the default browser border */
+    cursor: pointer; /* changes the cursor when hovering over the button */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s; /* smooth color transition on hover */
+}
+
+button[type="submit"]:hover {
+    background-color: green; /* color when you hover over the button */
+    color: white;
+}
