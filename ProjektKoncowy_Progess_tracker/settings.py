@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "accounts.apps.AccountsConfig",
     "progress_tracker.apps.ProgressTrackerConfig",
 
+
 ]
 
 MIDDLEWARE = [

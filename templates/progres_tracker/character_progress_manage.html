@@ -1,4 +1,7 @@
 {% extends 'dashboard.html' %}
+
+{% load custom_filters %}
+
 {% block content %}
     {% include "top_header.html" %}
     <div class="container">
@@ -13,8 +16,7 @@
                         <ul>
                             {% for step in quest.queststep_set.all %}
                                 <li>
-                                    <input type="checkbox" name="completed_{{ step.id }}" id="completed_{{ step.id }}" {% if progress_dict|default:false %}
- checked {% endif %}>
+                                    <input type="checkbox" name="completed_{{ step.id }}" id="completed_{{ step.id }}" {% if progress_dict|get_item:step.id %}checked{% endif %}>
                                     <label for="completed_{{ step.id }}">{{ step.name }}: {{ step.description }}</label>
                                 </li>
                             {% endfor %}

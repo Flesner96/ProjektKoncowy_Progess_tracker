@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from django.forms import modelformset_factory
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy, reverse
@@ -264,6 +264,11 @@ class CharacterQuestStepProgressCreateView(CreateView):
 class CharacterQuestProgressManageView(View):
     def get(self, request, character_id):
         character = get_object_or_404(Character, pk=character_id)
+
+        # Check if the logged-in user is the owner of the character
+        if character.user != request.user:
+            return HttpResponseForbidden("You are not allowed to access this character's progress.")
+
         quests = Quest.objects.filter(game=character.game).distinct()
 
         # Initialize progress_dict to keep track of completion status
@@ -281,6 +286,11 @@ class CharacterQuestProgressManageView(View):
 
     def post(self, request, character_id):
         character = get_object_or_404(Character, pk=character_id)
+
+        # Check if the logged-in user is the owner of the character
+        if character.user != request.user:
+            return HttpResponseForbidden("You are not allowed to modify this character's progress.")
+
         quest_steps = QuestStep.objects.filter(quest__game=character.game)
 
         # Update progress based on POST data
