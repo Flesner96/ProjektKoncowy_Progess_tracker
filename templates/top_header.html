@@ -3,11 +3,11 @@
         <a href="{% url 'dashboard' %}">Home</a>
     </div>
     <div class="nav-center">
-        
+        <!-- Centered content can be added here if needed -->
     </div>
     <div class="nav-right">
         {% if user.is_authenticated %}
-            Witaj {{ user }}
+            <span>Witaj {{ user }}</span>
             <a href="{% url 'logout' %}">wyloguj</a>
         {% else %}
             <a href="{% url 'register' %}">zarejestruj</a>

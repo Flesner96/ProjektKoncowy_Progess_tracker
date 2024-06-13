@@ -25,6 +25,7 @@
                 <ul class="dropdown-menu" aria-labelledby="extrasDropdown">
                             <li><a class="dropdown-item" href="{% url 'events' %}">Events</a></li>
                             <li><a class="dropdown-item" href="{% url 'bosses' %}">Bosses</a></li>
+                    <!-- Add other games as needed -->
                 </ul>
             </li>
             {% if user.is_superuser %}
@@ -35,8 +36,6 @@
                 <ul class="dropdown-menu" aria-labelledby="adminDropdown">
                     <li><a class="dropdown-item" href="{% url 'add_quest' %}">Add New Quest</a></li>
                     <li><a class="dropdown-item" href="{% url 'add_quest_step' %}">Add New Quest Step</a></li>
-                    <!-- Optionally add game actions if needed in future -->
-                    <!-- <li><a class="dropdown-item" href="{% url 'add_game' %}">Add New Game</a></li> -->
                 </ul>
             </li>
             {% endif %}

@@ -6,7 +6,7 @@ body {
 .topnav {
     display: flex;
     justify-content: space-between;
-    background-color: #333;
+    background-color: #04AA6D; /* Adjust the background color to match the theme */
     padding: 14px;
 }
 
@@ -14,21 +14,11 @@ body {
     display: flex;
 }
 
-.nav-left ul {
-    display: flex;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.nav-left li {
-    margin-right: 20px;
-}
-
 .nav-left a {
     color: #f2f2f2;
     text-decoration: none;
     font-size: 17px;
+    margin-right: 20px;
 }
 
 .nav-left a:hover {
@@ -51,6 +41,12 @@ body {
 .nav-right a:hover {
     background-color: #ddd;
     color: black;
+}
+
+.nav-right span {
+    color: #f2f2f2;
+    font-size: 17px;
+    margin-right: 20px;
 }
 
 .content {
@@ -169,6 +165,7 @@ button[type="submit"]:hover {
     background-color: green;
     color: white;
 }
+
 .form-control-limited {
     max-width: 100px; /* Adjust this value as needed */
     width: 100%;
