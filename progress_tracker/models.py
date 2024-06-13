@@ -17,7 +17,6 @@ class Quest(models.Model):
 
 class Character(models.Model):
     name = models.CharField(max_length=100)
-
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     quests = models.ManyToManyField(Quest, through='CharacterQuestProgress')
@@ -37,7 +36,7 @@ class QuestStep(models.Model):
 class CharacterQuestProgress(models.Model):
     character = models.ForeignKey(Character, on_delete=models.CASCADE)
     quest = models.ForeignKey(Quest, on_delete=models.CASCADE)
-    completed = models.BooleanField(default=False)
+    completed = models.BooleanField(default=False)  # Track overall quest completion
 
     class Meta:
         unique_together = ['character', 'quest']

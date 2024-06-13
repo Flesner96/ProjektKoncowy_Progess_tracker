@@ -2,20 +2,20 @@
 
 {% block content %}
     {% include "top_header.html" %}
-<h2>Character list</h2>
-<table>
-    <tr>
-        <th>Name</th>
-        <th>Game</th>
-        <th>Owner</th>
-    </tr>
-    {% for character in characters %}
-    <tr>
-        <td><a href="{% url 'character_detail' character.id %}">{{ character.name }}</a></td>
-        <td>{{ character.game }}</td>
-        <td>{{ character.user }}</td>
-    </tr>
-    {% endfor %}
-</table>
+    <h2>Character list</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Game</th>
+            <th>Owner</th>
+        </tr>
+        {% for character in characters %}
+        <tr>
+            <td><a href="{% url 'character_detail' character.id %}">{{ character.name }}</a></td>
+            <td>{{ character.game }}</td>
+            <td>{{ character.user }}</td>
+        </tr>
+        {% endfor %}
+    </table>
     <a href="{% url 'dashboard' %}" class="btn btn-default">Back</a>
 {% endblock %}

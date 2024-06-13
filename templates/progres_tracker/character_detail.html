@@ -3,11 +3,14 @@
     {% include "top_header.html" %}
     <h2>Character details: {{ character.name }}</h2>
     <p>Name: {{ character.name }}</p>
-    <p>Profession: {{ character.profession }}</p>
     <p>Game: {{ character.game }}</p>
     <p>User: {{ character.user }}</p>
 
-   <a href="{% url 'character-progress-manage' character.id %}" class="btn btn-primary">Manage Progress</a>
+    {% if is_owner %}
+        <a href="{% url 'character-progress-manage' character.id %}" class="btn btn-primary">Manage Progress</a>
+    {% else %}
+        <a href="{% url 'character-progress-view' character.id %}" class="btn btn-primary">View Progress</a>
+    {% endif %}
 
     {% if error %}
         <script>

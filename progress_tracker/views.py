@@ -1,6 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.db.models import Q
-from django.forms import modelformset_factory
+from django.db.models import Q, Case, When, IntegerField
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.decorators import method_decorator
@@ -88,8 +87,7 @@ def character_delete(request, id):
     char_to_delete = get_object_or_404(Character, id=id)
 
     if char_to_delete.user != request.user:
-        context = {'error': "You do not have permission to delete this character."}
-        return render(request, 'progres_tracker/character_detail.html', context)
+        return HttpResponseForbidden("You are not allowed to delete this character.")
 
     if request.method == 'POST':
         char_to_delete.delete()
@@ -144,15 +142,28 @@ class GameDeleteView(DeleteView):
     success_url = reverse_lazy('game_list')
 
 
+@login_required
 def CharacterListView(request):
-    characters = Character.objects.all()
+    # Get all characters, ordering by whether the user is the owner
+    characters = Character.objects.annotate(
+        is_owner=Case(
+            When(user=request.user, then=1),
+            default=0,
+            output_field=IntegerField()
+        )
+    ).order_by('-is_owner', 'name')
     return render(request, 'progres_tracker/character_list.html', {'characters': characters})
 
 
+@method_decorator(login_required, name='dispatch')
 class CharacterDetailView(View):
     def get(self, request, *args, **kwargs):
-        character = Character.objects.get(pk=kwargs['id'])
-        return render(request, 'progres_tracker/character_detail.html', {'character': character})
+        character = get_object_or_404(Character, pk=kwargs['id'])
+        is_owner = character.user == request.user
+        return render(request, 'progres_tracker/character_detail.html', {
+            'character': character,
+            'is_owner': is_owner,
+        })
 
 
 @method_decorator(login_required, name='dispatch')
@@ -264,16 +275,15 @@ class CharacterQuestStepProgressCreateView(CreateView):
 class CharacterQuestProgressManageView(View):
     def get(self, request, character_id):
         character = get_object_or_404(Character, pk=character_id)
-
-        # Check if the logged-in user is the owner of the character
-        if character.user != request.user:
-            return HttpResponseForbidden("You are not allowed to access this character's progress.")
-
         quests = Quest.objects.filter(game=character.game).distinct()
 
-        # Initialize progress_dict to keep track of completion status
+        # Initialize progress_dict and quest_completed_dict
         progress_dict = {}
+        quest_completed_dict = {}
+
         for quest in quests:
+            quest_progress = CharacterQuestProgress.objects.filter(character=character, quest=quest).first()
+            quest_completed_dict[quest.id] = quest_progress.completed if quest_progress else False
             for step in quest.queststep_set.all():
                 progress = CharacterQuestStepProgress.objects.filter(character=character, quest_step=step).first()
                 progress_dict[step.id] = progress.completed if progress else False
@@ -281,23 +291,66 @@ class CharacterQuestProgressManageView(View):
         return render(request, 'progres_tracker/character_progress_manage.html', {
             'character': character,
             'quests': quests,
-            'progress_dict': progress_dict
+            'progress_dict': progress_dict,
+            'quest_completed_dict': quest_completed_dict,
         })
 
     def post(self, request, character_id):
         character = get_object_or_404(Character, pk=character_id)
+        quests = Quest.objects.filter(game=character.game)
 
-        # Check if the logged-in user is the owner of the character
-        if character.user != request.user:
-            return HttpResponseForbidden("You are not allowed to modify this character's progress.")
+        for quest in quests:
+            quest_completed = request.POST.get(f'quest_completed_{quest.id}', 'off') == 'on'
+            quest_progress, created = CharacterQuestProgress.objects.get_or_create(character=character, quest=quest)
+            quest_progress.completed = quest_completed
+            quest_progress.save()
 
-        quest_steps = QuestStep.objects.filter(quest__game=character.game)
+            steps = quest.queststep_set.all()
+            step_ids = [step.id for step in steps]
 
-        # Update progress based on POST data
-        for step in quest_steps:
-            completed = request.POST.get(f'completed_{step.id}', 'off') == 'on'
-            progress, created = CharacterQuestStepProgress.objects.get_or_create(character=character, quest_step=step)
-            progress.completed = completed
-            progress.save()
+            # Handle step completion
+            for step_id in step_ids:
+                completed = request.POST.get(f'completed_{step_id}', 'off') == 'on'
+                progress, created = CharacterQuestStepProgress.objects.get_or_create(character=character, quest_step_id=step_id)
+                progress.completed = completed
+                progress.save()
+
+            # If the quest is marked as complete, mark all steps as complete
+            if quest_completed:
+                CharacterQuestStepProgress.objects.filter(character=character, quest_step__quest=quest).update(completed=True)
+            else:
+                # If the quest has steps, check if all steps are completed
+                if steps.exists():
+                    all_steps_completed = CharacterQuestStepProgress.objects.filter(character=character, quest_step__quest=quest, completed=False).count() == 0
+                    if all_steps_completed:
+                        quest_progress.completed = True
+                    else:
+                        quest_progress.completed = False
+
+            quest_progress.save()
 
         return redirect('character-progress-manage', character_id=character.id)
+
+@method_decorator(login_required, name='dispatch')
+class CharacterQuestProgressView(View):
+    def get(self, request, character_id):
+        character = get_object_or_404(Character, pk=character_id)
+        quests = Quest.objects.filter(game=character.game).distinct()
+
+        # Initialize progress_dict and quest_completed_dict
+        progress_dict = {}
+        quest_completed_dict = {}
+
+        for quest in quests:
+            quest_progress = CharacterQuestProgress.objects.filter(character=character, quest=quest).first()
+            quest_completed_dict[quest.id] = quest_progress.completed if quest_progress else False
+            for step in quest.queststep_set.all():
+                progress = CharacterQuestStepProgress.objects.filter(character=character, quest_step=step).first()
+                progress_dict[step.id] = progress.completed if progress else False
+
+        return render(request, 'progres_tracker/character_progress_view.html', {
+            'character': character,
+            'quests': quests,
+            'progress_dict': progress_dict,
+            'quest_completed_dict': quest_completed_dict,
+        })
