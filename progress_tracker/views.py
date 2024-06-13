@@ -205,11 +205,11 @@ class CreateCommentView(CreateView):
         return self.object.quest.get_absolute_url()
 
 
-@method_decorator(login_required, name='dispatch')
+
 def EventsView(request):
     return render(request, 'Giveria/events.html')
 
-@method_decorator(login_required, name='dispatch')
+
 def BossesView(request):
     return render(request, 'Giveria/bosses.html')
 

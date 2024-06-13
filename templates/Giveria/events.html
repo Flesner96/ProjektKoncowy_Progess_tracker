@@ -7,22 +7,35 @@
 </style>
 {% endblock %}
 {% block content %}
-<body>
-<div class="panel-body">
-    <h1>Event Schedule for <span id="currentDay"></span></h1>
-    <p>Current Time: <span id="currentTime"></span></p>
-</div>
-<div class="panel-body">
-    <table class="table table-striped table-condensed" id="scheduleTable">
-        <thead>
-        <tr>
-            <th style="width:20%">Time</th>
-            <th style="width:80%">Bosses</th>
-        </tr>
-        </thead>
-        <tbody id="bossScheduleBody"></tbody>
-    </table>
-</div>
+    {% include "top_header.html" %}
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            {% include 'sidebar.html' %}
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Event Schedule for <span id="currentDay"></span></h1>
+                </div>
+                <div class="panel-body">
+                    <p>Current Time: <span id="currentTime"></span></p>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-striped table-condensed" id="scheduleTable">
+                        <thead>
+                            <tr>
+                                <th style="width:20%">Time</th>
+                                <th style="width:80%">Bosses</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bossScheduleBody"></tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+
 <script>
     const schedules = {
         "MONDAY": {
@@ -255,5 +268,5 @@
     updateSchedule();
     setInterval(updateSchedule, 30000);
 </script>
-</body>
+
 {% endblock %}

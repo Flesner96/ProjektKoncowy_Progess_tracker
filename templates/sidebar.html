@@ -1,0 +1,45 @@
+<nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+    <div class="position-sticky pt-3">
+        <ul class="nav flex-column">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="characterDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Characters
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="characterDropdown">
+                    <li><a class="dropdown-item" href="{% url 'character_list' %}">View All Characters</a></li>
+                    <li><a class="dropdown-item" href="{% url 'character_create' %}">Add New Character</a></li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="questDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Quests
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="questDropdown">
+                    <li><a class="dropdown-item" href="{% url 'quest_list' %}">View All Quests</a></li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="extrasDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Extras
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="extrasDropdown">
+                            <li><a class="dropdown-item" href="{% url 'events' %}">Events</a></li>
+                            <li><a class="dropdown-item" href="{% url 'bosses' %}">Bosses</a></li>
+                </ul>
+            </li>
+            {% if user.is_superuser %}
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Admin Actions
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                    <li><a class="dropdown-item" href="{% url 'add_quest' %}">Add New Quest</a></li>
+                    <li><a class="dropdown-item" href="{% url 'add_quest_step' %}">Add New Quest Step</a></li>
+                    <!-- Optionally add game actions if needed in future -->
+                    <!-- <li><a class="dropdown-item" href="{% url 'add_game' %}">Add New Game</a></li> -->
+                </ul>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
