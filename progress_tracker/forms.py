@@ -18,7 +18,7 @@ class QuestForm(forms.ModelForm):
 class CharacterForm(forms.ModelForm):
     class Meta:
         model = Character
-        fields = ['name', 'profession', 'game']
+        fields = ['name', 'game']
 
 
 class QuestStepForm(forms.ModelForm):
