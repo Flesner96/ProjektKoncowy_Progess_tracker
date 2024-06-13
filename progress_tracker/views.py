@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Case, When, IntegerField
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
@@ -11,7 +11,7 @@ from .models import Game, Quest, CharacterQuestProgress, Character, Comment, Que
 from .forms import GameForm, QuestForm, CharacterForm, QuestStepForm, CommentForm, CharacterQuestProgressForm, \
  CharacterQuestStepProgressForm
 from .utils import is_superuser
-
+from django.contrib import messages
 
 # Create your views here.
 
@@ -102,19 +102,37 @@ class QuestListView(ListView):
     template_name = 'progres_tracker/quest_list.html'
     context_object_name = 'quest_list'
 
-
 @method_decorator(login_required, name='dispatch')
-class QuestDetailView(DetailView):
-    model = Quest
-    template_name = 'progres_tracker/quest_detail.html'
-    context_object_name = 'quest'
+class QuestDetailView(View):
+    def get(self, request, pk):
+        quest = get_object_or_404(Quest, pk=pk)
+        quest_steps = QuestStep.objects.filter(quest=quest).order_by('order')
+        comments = Comment.objects.filter(quest=quest).order_by('-created_at')
+        comment_form = CommentForm()
+        return render(request, 'progres_tracker/quest_detail.html', {
+            'quest': quest,
+            'quest_steps': quest_steps,
+            'comments': comments,
+            'comment_form': comment_form,
+        })
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['comments'] = Comment.objects.filter(quest=self.object)
-        context['quest_steps'] = QuestStep.objects.filter(quest=self.object)
-        return context
-
+    def post(self, request, pk):
+        quest = get_object_or_404(Quest, pk=pk)
+        quest_steps = QuestStep.objects.filter(quest=quest).order_by('order')
+        comments = Comment.objects.filter(quest=quest).order_by('-created_at')
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)
+            new_comment.user = request.user
+            new_comment.quest = quest
+            new_comment.save()
+            return redirect('quest_detail', pk=quest.pk)
+        return render(request, 'progres_tracker/quest_detail.html', {
+            'quest': quest,
+            'quest_steps': quest_steps,
+            'comments': comments,
+            'comment_form': comment_form,
+        })
 
 @method_decorator(user_passes_test(is_superuser), name='dispatch')
 class QuestDeleteView(DeleteView):
@@ -122,13 +140,13 @@ class QuestDeleteView(DeleteView):
     template_name = 'progres_tracker/quest_confirm_delete.html'
     success_url = reverse_lazy('quest_list')
 
-
+@method_decorator(login_required, name='dispatch')
 class GameListView(ListView):
     model = Game
     template_name = 'progres_tracker/game_list.html'
     context_object_name = 'games'
 
-
+@method_decorator(login_required, name='dispatch')
 class GameDetailView(DetailView):
     model = Game
     template_name = 'progres_tracker/game_detail.html'
@@ -195,34 +213,14 @@ def search_quests(request):
         quests = Quest.objects.all()
     return render(request, 'progres_tracker/search_results.html', {'quests': quests, 'query': query})
 
-
+@method_decorator(login_required, name='dispatch')
 def EventsView(request):
     return render(request, 'Giveria/events.html')
 
-
+@method_decorator(login_required, name='dispatch')
 def BossesView(request):
     return render(request, 'Giveria/bosses.html')
 
-
-class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Comment
-    fields = ['content']
-    template_name = 'progres_tracker/add_comment.html'
-
-    def form_valid(self, form):
-        return super().form_valid(form)
-
-    def test_func(self):
-        comment = self.get_object()
-        return self.request.user == comment.user
-
-    def get_success_url(self):
-        return reverse('quest-detail', kwargs={'pk': self.object.quest.pk})
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['action_text'] = "Edit Comment"
-        return context
 
 
 @method_decorator(user_passes_test(is_superuser), name='dispatch')
@@ -354,3 +352,30 @@ class CharacterQuestProgressView(View):
             'progress_dict': progress_dict,
             'quest_completed_dict': quest_completed_dict,
         })
+
+class CommentUpdateView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        comment = get_object_or_404(Comment, pk=pk, user=request.user)
+        form = CommentForm(instance=comment)
+        return render(request, 'progres_tracker/comment_form.html', {'form': form, 'comment': comment})
+
+    def post(self, request, pk):
+        comment = get_object_or_404(Comment, pk=pk, user=request.user)
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Comment updated successfully')
+            return redirect('quest_detail', pk=comment.quest.pk)
+        return render(request, 'progres_tracker/comment_form.html', {'form': form, 'comment': comment})
+
+class CommentDeleteView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        comment = get_object_or_404(Comment, pk=pk, user=request.user)
+        return render(request, 'progres_tracker/comment_confirm_delete.html', {'comment': comment})
+
+    def post(self, request, pk):
+        comment = get_object_or_404(Comment, pk=pk, user=request.user)
+        quest_pk = comment.quest.pk
+        comment.delete()
+        messages.success(request, 'Comment deleted successfully')
+        return redirect('quest_detail', pk=quest_pk)

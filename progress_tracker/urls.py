@@ -5,7 +5,8 @@ from .views import (
     CreateCommentView, search_quests, GameListView, GameDetailView,
     CreateGameView, UpdateGameView, GameDeleteView, CharacterListView,
     character_delete, EventsView, BossesView, CreateQuestStepView,
-    CharacterQuestStepProgressCreateView, CharacterQuestProgressManageView, CharacterQuestProgressView
+    CharacterQuestStepProgressCreateView, CharacterQuestProgressManageView, CharacterQuestProgressView,
+    CommentUpdateView, CommentDeleteView
 )
 
 urlpatterns = [
@@ -32,4 +33,6 @@ urlpatterns = [
     path('character/<int:character_id>/progress/add/', CharacterQuestStepProgressCreateView.as_view(), name='add_character_progress'),
     path('character/<int:character_id>/progress/', CharacterQuestProgressManageView.as_view(), name='character-progress-manage'),
     path('character/<int:character_id>/view/', CharacterQuestProgressView.as_view(), name='character-progress-view'),
+    path('comment/<int:pk>/edit/', CommentUpdateView.as_view(), name='comment_update'),
+    path('comment/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment_delete'),
 ]

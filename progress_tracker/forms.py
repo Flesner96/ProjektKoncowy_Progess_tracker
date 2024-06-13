@@ -26,7 +26,7 @@ class QuestStepForm(forms.ModelForm):
         model = QuestStep
         fields = ['name', 'description', 'quest', 'order']
 
-# Form for CharacterQuestProgress (assuming this tracks overall quest progress, but since we're focusing on steps, it's not immediately necessary)
+
 class CharacterQuestProgressForm(forms.ModelForm):
     class Meta:
         model = CharacterQuestProgress
@@ -51,3 +51,6 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Add a comment...'}),
+        }
