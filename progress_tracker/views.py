@@ -1,7 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q, Case, When, IntegerField
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.db.models import Case, When, IntegerField
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -100,7 +101,7 @@ def character_delete(request, id):
 class QuestListView(ListView):
     model = Quest
     template_name = 'progres_tracker/quest_list.html'
-    context_object_name = 'quest_list'
+    context_object_name = 'quests'
 
 @method_decorator(login_required, name='dispatch')
 class QuestDetailView(View):
@@ -203,15 +204,6 @@ class CreateCommentView(CreateView):
     def get_success_url(self):
         return self.object.quest.get_absolute_url()
 
-
-@login_required
-def search_quests(request):
-    query = request.GET.get('q')
-    if query:
-        quests = Quest.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))
-    else:
-        quests = Quest.objects.all()
-    return render(request, 'progres_tracker/search_results.html', {'quests': quests, 'query': query})
 
 @method_decorator(login_required, name='dispatch')
 def EventsView(request):
@@ -379,3 +371,14 @@ class CommentDeleteView(LoginRequiredMixin, View):
         comment.delete()
         messages.success(request, 'Comment deleted successfully')
         return redirect('quest_detail', pk=quest_pk)
+
+def quest_search(request):
+    query = request.GET.get('q', '')
+    quests = Quest.objects.filter(name__icontains=query) if query else Quest.objects.all()
+    html = render_to_string('progres_tracker/partials/quest_list.html', {'quests': quests}, request=request)
+    return JsonResponse({'html': html})
+def character_search(request):
+    query = request.GET.get('q', '')
+    characters = Character.objects.filter(name__icontains=query) if query else Character.objects.all()
+    html = render_to_string('progres_tracker/partials/character_list.html', {'characters': characters})
+    return JsonResponse({'html': html})

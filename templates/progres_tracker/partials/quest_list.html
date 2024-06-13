@@ -1,0 +1,28 @@
+<table>
+    <thead>
+    <tr>
+        <th>Quest Name</th>
+        <th>Game</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for quest in quests %}
+        <tr>
+            <td>{{ quest.name }}</td>
+            <td>{{ quest.game }}</td>
+            <td>
+                <a href="{% url 'quest_detail' quest.id %}">View</a>
+                {% if user.is_superuser %}
+                    <a href="{% url 'edit_quest' quest.id %}">Edit</a>
+                    <a href="{% url 'delete_quest' quest.id %}">Delete</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="3">No quests found.</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

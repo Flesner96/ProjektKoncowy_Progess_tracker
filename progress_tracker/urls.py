@@ -2,11 +2,11 @@ from django.urls import path
 from .views import (
     DashboardView, CreateCharacterView, QuestDetailView, CreateQuestView,
     UpdateQuestView, QuestDeleteView, QuestListView, CharacterDetailView,
-    CreateCommentView, search_quests, GameListView, GameDetailView,
+    CreateCommentView, GameListView, GameDetailView,
     CreateGameView, UpdateGameView, GameDeleteView, CharacterListView,
     character_delete, EventsView, BossesView, CreateQuestStepView,
     CharacterQuestStepProgressCreateView, CharacterQuestProgressManageView, CharacterQuestProgressView,
-    CommentUpdateView, CommentDeleteView
+    CommentUpdateView, CommentDeleteView, quest_search, character_search
 )
 
 urlpatterns = [
@@ -19,7 +19,6 @@ urlpatterns = [
     path('quests/', QuestListView.as_view(), name='quest_list'),
     path('character_detail/<int:id>/', CharacterDetailView.as_view(), name='character_detail'),
     path('quests/<int:pk>/comment/', CreateCommentView.as_view(), name='comment_create'),
-    path('search/', search_quests, name='search_quests'),
     path('games/', GameListView.as_view(), name='game_list'),
     path('games/<int:pk>/', GameDetailView.as_view(), name='game_detail'),
     path('games/add/', CreateGameView.as_view(), name='add_game'),
@@ -35,4 +34,6 @@ urlpatterns = [
     path('character/<int:character_id>/view/', CharacterQuestProgressView.as_view(), name='character-progress-view'),
     path('comment/<int:pk>/edit/', CommentUpdateView.as_view(), name='comment_update'),
     path('comment/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment_delete'),
+    path('quests/search/', quest_search, name='quest_search'),
+    path('characters/search/', character_search, name='character_search'),
 ]

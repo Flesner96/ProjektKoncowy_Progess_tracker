@@ -1,0 +1,14 @@
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Game</th>
+        <th>Owner</th>
+    </tr>
+    {% for character in characters %}
+    <tr>
+        <td><a href="{% url 'character_detail' character.id %}">{{ character.name }}</a></td>
+        <td>{{ character.game }}</td>
+        <td>{{ character.user }}</td>
+    </tr>
+    {% endfor %}
+</table>

@@ -3,37 +3,54 @@
 {% block content %}
     {% include "top_header.html" %}
     <h1>Quest List</h1>
-    <form action="{% url 'search_quests' %}" method="get">
-        <input type="text" name="q" placeholder="Search quests...">
-        <input type="submit" value="Search">
+    <form id="quest-search-form">
+        <input type="text" id="quest-search-input" placeholder="Search quests...">
+        <button type="submit">Search</button>
     </form>
-    <table>
-        <thead>
-        <tr>
-            <th>Quest Name</th>
-            <th>Game</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for quest in quest_list %}
+
+    <div id="quest-list">
+        <table>
+            <thead>
             <tr>
-                <td>{{ quest.name }}</td>
-                <td>{{ quest.game }}</td>
-                <td>
-                     <a href="{% url 'quest_detail' quest.id %}">View</a>
-                    {% if user.is_superuser %}
-                        <a href="{% url 'edit_quest' quest.id %}">Edit</a>
-                        <a href="{% url 'delete_quest' quest.id %}">Delete</a>
-                    {% endif %}
-                </td>
+                <th>Quest Name</th>
+                <th>Game</th>
+                <th>Actions</th>
             </tr>
-        {% empty %}
-            <tr>
-                <td colspan="3">No quests found.</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-<a href="{% url 'dashboard' %}" class="btn btn-default">Back</a>
+            </thead>
+            <tbody>
+            {% for quest in quests %}
+                <tr>
+                    <td>{{ quest.name }}</td>
+                    <td>{{ quest.game }}</td>
+                    <td>
+                        <a href="{% url 'quest_detail' quest.id %}">View</a>
+                        {% if user.is_superuser %}
+                            <a href="{% url 'edit_quest' quest.id %}">Edit</a>
+                            <a href="{% url 'delete_quest' quest.id %}">Delete</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3">No quests found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <a href="{% url 'dashboard' %}" class="btn btn-default">Back</a>
+
+    <script>
+        document.getElementById('quest-search-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            let query = document.getElementById('quest-search-input').value;
+            fetch("{% url 'quest_search' %}?q=" + query)
+                .then(response => response.json())
+                .then(data => {
+                    let questList = document.getElementById('quest-list');
+                    questList.innerHTML = data.html;
+                });
+        });
+    </script>
 {% endblock %}
