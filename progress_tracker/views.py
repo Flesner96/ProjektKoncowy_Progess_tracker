@@ -89,12 +89,9 @@ def character_delete(request, id):
 
     return render(request, 'progres_tracker/character_delete_confirm.html', {'char': char_to_delete})
 
-
-@method_decorator(login_required, name='dispatch')
-class QuestListView(ListView):
-    model = Quest
-    template_name = 'progres_tracker/quest_list.html'
-    context_object_name = 'quests'
+def quest_list(request):
+    quests = Quest.objects.all()
+    return render(request, 'progres_tracker/quest_list.html', {'quests': quests})
 
 
 @method_decorator(login_required, name='dispatch')
@@ -374,11 +371,17 @@ class CommentDeleteView(LoginRequiredMixin, View):
         return redirect('quest_detail', pk=quest_pk)
 
 
+@login_required
 def quest_search(request):
-    query = request.GET.get('q', '')
-    quests = Quest.objects.filter(name__icontains=query) if query else Quest.objects.all()
-    html = render_to_string('progres_tracker/partials/quest_list.html', {'quests': quests}, request=request)
+    query = request.GET.get('q')
+    if query:
+        quests = Quest.objects.filter(name__icontains=query)
+    else:
+        quests = Quest.objects.all()
+
+    html = render_to_string('progres_tracker/partials/quest_list.html', {'quests': quests, 'user': request.user})
     return JsonResponse({'html': html})
+
 
 
 def character_search(request):
@@ -386,3 +389,16 @@ def character_search(request):
     characters = Character.objects.filter(name__icontains=query)
     html = render_to_string('progres_tracker/partials/character_list.html', {'characters': characters})
     return JsonResponse({'html': html})
+
+
+def quest_filter(request):
+    game = request.GET.get('game', 'all')
+    if game == 'all':
+        quests = Quest.objects.all()
+    else:
+        quests = Quest.objects.filter(game__name__icontains=game)
+    context = {
+        'quests': quests,
+        'user': request.user,  # Ensure user context is passed
+    }
+    return JsonResponse({'html': render_to_string('progres_tracker/partials/quest_list.html', context)})

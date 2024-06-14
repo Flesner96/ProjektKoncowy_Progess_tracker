@@ -9,22 +9,36 @@
 
             <!-- Main content -->
             <main class="col-md-7 ms-sm-auto col-lg-8 px-md-4">
-                <div class="mt-5">
-                    <h1>Quest List</h1>
-                    <form id="quest-search-form" class="mb-4">
-                        <input type="text" id="quest-search-input" class="form-control" placeholder="Search quests..." style="width: 50%; display: inline-block;">
-                        <button type="submit" class="btn btn-primary ml-2">Search</button>
-                    </form>
-
-                    <div id="quest-list">
-                        {% include 'progres_tracker/partials/quest_list.html' %}
-                    </div>
-
-                    <a href="{% url 'dashboard' %}" class="btn btn-primary mt-3">Back</a>
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Quest List</h1>
                 </div>
+                <form id="quest-search-form">
+                    <input type="text" id="quest-search-input" class="form-control" placeholder="Search quests..." style="width: 50%;">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+
+                <div class="btn-group mt-3" role="group" aria-label="Game Filters">
+                    <button type="button" class="btn btn-secondary filter-btn" data-game="all">All Games</button>
+                    <button type="button" class="btn btn-secondary filter-btn" data-game="giveria">
+                        <img src="{% static 'images/logogiveria.png' %}" alt="Giveria" style="height: 20px;">
+                    </button>
+                    <button type="button" class="btn btn-secondary filter-btn" data-game="NTSW">
+                        <img src="{% static 'images/logo.png' %}" alt="Naruto" style="height: 20px;">
+                    </button>
+                    <button type="button" class="btn btn-secondary filter-btn" data-game="Path Of Exile">
+                        <img src="{% static 'images/Path-of-Exile-Logo.png' %}" alt="Path Of Exile" style="height: 20px;">
+                    </button>
+                </div>
+
+                <div id="quest-list">
+                    {% include 'progres_tracker/partials/quest_list.html' %}
+                </div>
+
+                <a href="{% url 'dashboard' %}" class="btn btn-primary">Back</a>
             </main>
+
             <!-- Right margin -->
-            <div class="col-md-2 d-none d-md-block bg-light"></div>
+            <div class="col-md-2 d-none d-md-block bg-light right-margin"></div>
         </div>
     </div>
 
@@ -38,6 +52,18 @@
                     let questList = document.getElementById('quest-list');
                     questList.innerHTML = data.html;
                 });
+        });
+
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                let game = this.getAttribute('data-game');
+                fetch("{% url 'quest_filter' %}?game=" + game)
+                    .then(response => response.json())
+                    .then(data => {
+                        let questList = document.getElementById('quest-list');
+                        questList.innerHTML = data.html;
+                    });
+            });
         });
     </script>
 {% endblock %}
