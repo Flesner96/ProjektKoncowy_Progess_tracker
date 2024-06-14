@@ -12,21 +12,21 @@
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Quest List</h1>
                 </div>
-                <form id="quest-search-form">
-                    <input type="text" id="quest-search-input" class="form-control" placeholder="Search quests..." style="width: 50%;">
-                    <button type="submit" class="btn btn-primary">Search</button>
+                <form id="quest-search-form" class="d-flex justify-content-center mb-3">
+                    <input type="text" id="quest-search-input" class="form-control" placeholder="Search quests..." style="width: 25%;">
+                    <button type="submit" class="btn btn-primary ms-2">Search</button>
                 </form>
 
-                <div class="btn-group mt-3" role="group" aria-label="Game Filters">
-                    <button type="button" class="btn btn-secondary filter-btn" data-game="all">All Games</button>
-                    <button type="button" class="btn btn-secondary filter-btn" data-game="giveria">
-                        <img src="{% static 'images/logogiveria.png' %}" alt="Giveria" style="height: 20px;">
+                <div class="d-flex justify-content-center mb-3">
+                    <button type="button" class="btn filter-btn" data-game="all">All Games</button>
+                    <button type="button" class="btn filter-btn" data-game="giveria">
+                        <img src="{% static 'images/logogiveria.png' %}" alt="Giveria" style="height: 30px;">
                     </button>
-                    <button type="button" class="btn btn-secondary filter-btn" data-game="NTSW">
-                        <img src="{% static 'images/logo.png' %}" alt="Naruto" style="height: 20px;">
+                    <button type="button" class="btn filter-btn" data-game="NTSW">
+                        <img src="{% static 'images/logo.png' %}" alt="Naruto" style="height: 30px;">
                     </button>
-                    <button type="button" class="btn btn-secondary filter-btn" data-game="Path Of Exile">
-                        <img src="{% static 'images/Path-of-Exile-Logo.png' %}" alt="Path Of Exile" style="height: 20px;">
+                    <button type="button" class="btn filter-btn" data-game="Path Of Exile">
+                        <img src="{% static 'images/Path-of-Exile-Logo.png' %}" alt="Path Of Exile" style="height: 30px;">
                     </button>
                 </div>
 
@@ -41,6 +41,42 @@
             <div class="col-md-2 d-none d-md-block bg-light right-margin"></div>
         </div>
     </div>
+
+    <style>
+        .filter-btn {
+            font-size: 1.2em;
+            padding: 10px 20px;
+            margin-right: 10px;
+            border: none;
+            background-color: #f8f9fa; /* Match the right margin color */
+        }
+
+        #quest-list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #quest-list th, #quest-list td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        #quest-list tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        #quest-list tr:hover {
+            background-color: #ddd;
+        }
+
+        #quest-list th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #04AA6D;
+            color: white;
+        }
+    </style>
 
     <script>
         document.getElementById('quest-search-form').addEventListener('submit', function(event) {
