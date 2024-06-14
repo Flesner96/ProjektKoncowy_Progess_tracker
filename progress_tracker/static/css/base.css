@@ -6,7 +6,7 @@ body {
 .topnav {
     display: flex;
     justify-content: space-between;
-    background-color: #04AA6D; /* Adjust the background color to match the theme */
+    background-color: #04AA6D;
     padding: 14px;
 }
 
@@ -167,58 +167,75 @@ button[type="submit"]:hover {
 }
 
 .form-control-limited {
-    max-width: 100px; /* Adjust this value as needed */
+    max-width: 100px;
     width: 100%;
 }
 
 .datetime-control-limited {
-    max-width: 150px; /* Adjust this value as needed */
+    max-width: 150px;
     width: 100%;
 }
 
 .right-margin {
-    min-height: 100vh; /* Ensures the right margin spans the full viewport height */
-    background-color: #f8f9fa; /* Adjust the background color as needed */
+    min-height: 100vh;
+    background-color: #f8f9fa;
 }
 
-/* Sidebar Links */
 .nav-link {
-    color: #333; /* Default text color */
+    color: #333;
     text-decoration: none;
 }
 
 .nav-link:hover {
-    color: #0056b3; /* Darker color for better contrast */
-    text-decoration: underline; /* Underline on hover for additional visual cue */
-    background-color: #e9ecef; /* Light background color on hover for better visibility */
+    color: #0056b3;
+    text-decoration: underline;
+    background-color: #e9ecef;
 }
 
-/* Sidebar Dropdown Links */
 .dropdown-item {
-    color: #333; /* Default text color */
+    color: #333;
     text-decoration: none;
 }
 
 .dropdown-item:hover {
-    color: #0056b3; /* Darker color for better contrast */
-    text-decoration: underline; /* Underline on hover for additional visual cue */
-    background-color: #e9ecef; /* Light background color on hover for better visibility */
+    color: #0056b3;
+    text-decoration: underline;
+    background-color: #e9ecef;
 }
 
-/* Buttons */
 .btn-primary {
-    background-color: #007bff; /* Primary button color */
-    border: none; /* Remove border */
+    background-color: #007bff;
+    border: none;
 }
 
 .btn-primary:hover {
-    background-color: #0056b3; /* Darker color for better contrast */
-    border: none; /* Remove border */
-    color: #ffffff; /* Ensure text color is white for better contrast */
+    background-color: #0056b3;
+    border: none;
+    color: #ffffff;
 }
 
-/* Additional button styles */
 .btn-secondary:hover {
-    background-color: #5a6268; /* Darker shade for hover effect */
-    color: #ffffff; /* Ensure text color is white for better contrast */
+    background-color: #5a6268;
+    color: #ffffff;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+}
+
+.table-striped > tbody > tr:nth-of-type(even) {
+    background-color: #ffffff;
+}
+
+/* Accordion styles */
+.accordion-button {
+    cursor: pointer;
+}
+
+.accordion-item {
+    border: none;
+}
+
+.accordion-button::after {
+    display: none;
 }

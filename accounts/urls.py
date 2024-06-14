@@ -17,10 +17,14 @@ Including another URLconf
 
 from django.urls import path
 from accounts import views
-
+from accounts.views import manage_account, change_email, DeleteAccountView, ChangePasswordView
 
 urlpatterns = [
     path('register/', views.CreateUserView.as_view(), name="register"),
     path('login/', views.LoginView.as_view(), name="login"),
     path('logout/', views.LogoutView.as_view(), name="logout"),
+    path('account/manage/', manage_account, name='manage_account'),
+    path('account/change_email/', change_email, name='change_email'),
+    path('account/change_password/', ChangePasswordView.as_view(), name='change_password'),
+    path('delete_account/', DeleteAccountView.as_view(), name='delete_account'),
 ]

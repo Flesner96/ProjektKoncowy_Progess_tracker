@@ -353,7 +353,6 @@ class CommentUpdateView(LoginRequiredMixin, View):
         form = CommentForm(request.POST, instance=comment)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Comment updated successfully')
             return redirect('quest_detail', pk=comment.quest.pk)
         return render(request, 'progres_tracker/comment_form.html', {'form': form, 'comment': comment})
 

@@ -47,7 +47,25 @@
             </main>
 
             <!-- Right margin -->
-            <div class="col-md-2 d-none d-md-block bg-light"></div>
+            <div class="col-md-2 d-none d-md-block bg-light right-margin"></div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="bossModal" tabindex="-1" aria-labelledby="bossModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bossModalLabel">Next Boss Fight</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Next fight with boss <span id="bossName"></span> will be available on <span id="bossTime"></span>.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -61,8 +79,13 @@
             width: 100%;
             max-width: 400px; /* Same as the select box */
         }
+        .right-margin {
+            min-height: 100vh; /* Ensures the right margin spans the full viewport height */
+            background-color: #f8f9fa; /* Adjust the background color as needed */
+        }
     </style>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const cooldowns20h = {
             "Lost Brain": 20,
@@ -102,7 +125,11 @@
             const cooldownHours = cooldowns[selectedBoss];
             const nextFightTime = new Date(selectedDateTime.getTime() + cooldownHours * 60 * 60 * 1000);
 
-            alert(`Next fight with boss ${selectedBoss} will be available on ${nextFightTime.toLocaleString()}.`);
+            document.getElementById('bossName').textContent = selectedBoss;
+            document.getElementById('bossTime').textContent = nextFightTime.toLocaleString();
+
+            var bossModal = new bootstrap.Modal(document.getElementById('bossModal'), {});
+            bossModal.show();
         }
 
         document.getElementById('bossForm').addEventListener('submit', function(event) {

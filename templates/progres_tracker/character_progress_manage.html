@@ -13,34 +13,75 @@
                     <h2>Manage Progress for {{ character.name }}</h2>
                     <form method="post">
                         {% csrf_token %}
-                        <div>
+                        <div class="accordion" id="questsAccordion">
                             {% for quest in quests %}
-                                <h3>{{ quest.name }}</h3>
-                                <p>{{ quest.description }}</p>
-                                <input type="checkbox" name="quest_completed_{{ quest.id }}" id="quest_completed_{{ quest.id }}" {% if quest_completed_dict|get_item:quest.id %}checked{% endif %} class="quest-checkbox" data-quest-id="{{ quest.id }}"> Mark whole quest as completed
-                                {% if quest.queststep_set.all %}
-                                    <ul>
-                                        {% for step in quest.queststep_set.all %}
-                                            <li>
-                                                <input type="checkbox" name="completed_{{ step.id }}" id="completed_{{ step.id }}" {% if progress_dict|get_item:step.id %}checked{% endif %} class="step-checkbox" data-quest-id="{{ quest.id }}">
-                                                <label for="completed_{{ step.id }}">{{ step.name }}: {{ step.description }}</label>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                {% else %}
-                                    <p>No steps available for this quest.</p>
-                                {% endif %}
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="heading{{ quest.id }}">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ quest.id }}" aria-expanded="false" aria-controls="collapse{{ quest.id }}">
+                                            {{ quest.name }}
+                                        </button>
+                                    </h2>
+                                    <div id="collapse{{ quest.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ quest.id }}" data-bs-parent="#questsAccordion">
+                                        <div class="accordion-body">
+                                            <p>{{ quest.description }}</p>
+                                            <input type="checkbox" name="quest_completed_{{ quest.id }}" id="quest_completed_{{ quest.id }}" {% if quest_completed_dict|get_item:quest.id %}checked{% endif %} class="quest-checkbox" data-quest-id="{{ quest.id }}"> Mark whole quest as completed
+                                            {% if quest.queststep_set.all %}
+                                                <ul>
+                                                    {% for step in quest.queststep_set.all %}
+                                                        <li>
+                                                            <input type="checkbox" name="completed_{{ step.id }}" id="completed_{{ step.id }}" {% if progress_dict|get_item:step.id %}checked{% endif %} class="step-checkbox" data-quest-id="{{ quest.id }}">
+                                                            <label for="completed_{{ step.id }}">{{ step.name }}: {{ step.description }}</label>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% else %}
+                                                <p>No steps available for this quest.</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
                             {% endfor %}
                         </div>
                         <button type="submit" class="btn btn-primary">Save Progress</button>
+                        <a href="{% url 'character_detail' character.id %}" class="btn btn-primary mt-3">Back</a>
                     </form>
-                    <a href="{% url 'character_detail' character.id %}" class="btn btn-primary mt-3">Back</a>
                 </div>
             </main>
             <!-- Right margin -->
-            <div class="col-md-2 d-none d-md-block bg-light"></div>
+            <div class="col-md-2 d-none d-md-block bg-light right-margin"></div>
         </div>
     </div>
+
+    <style>
+        .accordion-button {
+            color: black;
+            text-decoration: none;
+            width: 100%;
+            text-align: left;
+            padding: 10px;
+            border: 1px solid #6c7f9a;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .accordion-button:hover,
+        .accordion-button:focus {
+            background-color: #e2e6ea;
+        }
+        .accordion-item {
+            margin-bottom: 10px;
+        }
+        .accordion-header {
+            padding: 0;
+            background-color: transparent;
+            border: none;
+        }
+        .accordion-body {
+            border: 1px solid #0044cc;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            padding: 20px;
+        }
+    </style>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
