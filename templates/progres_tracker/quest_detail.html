@@ -1,49 +1,60 @@
 {% extends 'dashboard.html' %}
 {% block content %}
     {% include "top_header.html" %}
-    
-    <h1>{{ quest.name }}</h1>
-    <p>{{ quest.description }}</p>
-    
-    {% if quest_steps %}
-        <table>
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Step Completed</th>
-            </tr>
-            {% for step in quest_steps %}
-                <tr>
-                    <td>{{ step.name }}</td>
-                    <td>{{ step.description }}</td>
-                    <td><input type="checkbox" name="step_completed_{{ step.id }}"></td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
-    
-    <h2>Comments</h2>
-    <div id="comments">
-        {% for comment in comments %}
-            <div class="comment">
-                <p>{{ comment.content }}</p>
-                <p>Posted by {{ comment.user.username }} on {{ comment.created_at }}</p>
-                {% if comment.user == request.user %}
-                    <a href="{% url 'comment_update' comment.pk %}" class="btn btn-sm btn-primary">Edit</a>
-                    <a href="{% url 'comment_delete' comment.pk %}" class="btn btn-sm btn-danger">Delete</a>
-                {% endif %}
-            </div>
-        {% empty %}
-            <p>No comments yet!</p>
-        {% endfor %}
-    </div>
-    
-    <h3>Add a Comment</h3>
-    <form method="post">
-        {% csrf_token %}
-        {{ comment_form.as_p }}
-        <button type="submit" class="btn btn-primary">Add Comment</button>
-    </form>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            {% include 'sidebar.html' %}
 
-    <a href="{% url 'quest_list' %}" class="btn btn-default">Back</a>
+            <!-- Main content -->
+            <main class="col-md-7 ms-sm-auto col-lg-8 px-md-4">
+                <div class="mt-5">
+                    <h1>{{ quest.name }}</h1>
+                    <p>{{ quest.description }}</p>
+                    
+                    {% if quest_steps %}
+                        <table class="table table-striped">
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                            </tr>
+                            {% for step in quest_steps %}
+                                <tr>
+                                    <td>{{ step.name }}</td>
+                                    <td>{{ step.description }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
+                    
+                    <h2>Comments</h2>
+                    <div id="comments">
+                        {% for comment in comments %}
+                            <div class="comment mb-3">
+                                <p>{{ comment.content }}</p>
+                                <p>Posted by {{ comment.user.username }} on {{ comment.created_at }}</p>
+                                {% if comment.user == request.user %}
+                                    <a href="{% url 'comment_update' comment.pk %}" class="btn btn-sm btn-primary">Edit</a>
+                                    <a href="{% url 'comment_delete' comment.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                                {% endif %}
+                            </div>
+                        {% empty %}
+                            <p>No comments yet!</p>
+                        {% endfor %}
+                    </div>
+                    
+                    <h3>Add a Comment</h3>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ comment_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Add Comment</button>
+                    </form>
+                    
+                    <a href="{% url 'quest_list' %}" class="btn btn-primary mt-3">Back</a>
+                </div>
+            </main>
+            <!-- Right margin -->
+            <div class="col-md-2 d-none d-md-block bg-light"></div>
+        </div>
+    </div>
 {% endblock %}

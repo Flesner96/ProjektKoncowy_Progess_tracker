@@ -10,9 +10,10 @@ from django.views import View
 from django.views.generic import CreateView, UpdateView, ListView, DetailView, DeleteView
 from .models import Game, Quest, CharacterQuestProgress, Character, Comment, QuestStep, CharacterQuestStepProgress
 from .forms import GameForm, QuestForm, CharacterForm, QuestStepForm, CommentForm, CharacterQuestProgressForm, \
- CharacterQuestStepProgressForm
+    CharacterQuestStepProgressForm
 from .utils import is_superuser
 from django.contrib import messages
+
 
 # Create your views here.
 
@@ -68,19 +69,11 @@ class CreateCharacterView(LoginRequiredMixin, CreateView):
     login_url = '/login/'
     form_class = CharacterForm
     template_name = 'progres_tracker/add_character.html'
-    success_url = reverse_lazy('character_list')
+    success_url = reverse_lazy('dashboard')
 
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
-
-
-@method_decorator(login_required, name='dispatch')
-class UpdateCharacterView(UpdateView):
-    model = Character
-    form_class = CharacterForm
-    template_name = 'progres_tracker/edit_character.html'
-    success_url = reverse_lazy('character_list')
 
 
 @login_required
@@ -102,6 +95,7 @@ class QuestListView(ListView):
     model = Quest
     template_name = 'progres_tracker/quest_list.html'
     context_object_name = 'quests'
+
 
 @method_decorator(login_required, name='dispatch')
 class QuestDetailView(View):
@@ -135,17 +129,20 @@ class QuestDetailView(View):
             'comment_form': comment_form,
         })
 
+
 @method_decorator(user_passes_test(is_superuser), name='dispatch')
 class QuestDeleteView(DeleteView):
     model = Quest
     template_name = 'progres_tracker/quest_confirm_delete.html'
     success_url = reverse_lazy('quest_list')
 
+
 @method_decorator(login_required, name='dispatch')
 class GameListView(ListView):
     model = Game
     template_name = 'progres_tracker/game_list.html'
     context_object_name = 'games'
+
 
 @method_decorator(login_required, name='dispatch')
 class GameDetailView(DetailView):
@@ -205,14 +202,12 @@ class CreateCommentView(CreateView):
         return self.object.quest.get_absolute_url()
 
 
-
 def EventsView(request):
     return render(request, 'Giveria/events.html')
 
 
 def BossesView(request):
     return render(request, 'Giveria/bosses.html')
-
 
 
 @method_decorator(user_passes_test(is_superuser), name='dispatch')
@@ -237,7 +232,6 @@ class CharacterQuestProgressUpdateView(UpdateView):
     form_class = CharacterQuestProgressForm
     template_name = 'progres_tracker/characterquestprogress_form.html'
     success_url = reverse_lazy('quest_list')
-
 
 
 @method_decorator(login_required, name='dispatch')
@@ -301,17 +295,21 @@ class CharacterQuestProgressManageView(View):
             # Handle step completion
             for step_id in step_ids:
                 completed = request.POST.get(f'completed_{step_id}', 'off') == 'on'
-                progress, created = CharacterQuestStepProgress.objects.get_or_create(character=character, quest_step_id=step_id)
+                progress, created = CharacterQuestStepProgress.objects.get_or_create(character=character,
+                                                                                     quest_step_id=step_id)
                 progress.completed = completed
                 progress.save()
 
             # If the quest is marked as complete, mark all steps as complete
             if quest_completed:
-                CharacterQuestStepProgress.objects.filter(character=character, quest_step__quest=quest).update(completed=True)
+                CharacterQuestStepProgress.objects.filter(character=character, quest_step__quest=quest).update(
+                    completed=True)
             else:
                 # If the quest has steps, check if all steps are completed
                 if steps.exists():
-                    all_steps_completed = CharacterQuestStepProgress.objects.filter(character=character, quest_step__quest=quest, completed=False).count() == 0
+                    all_steps_completed = CharacterQuestStepProgress.objects.filter(character=character,
+                                                                                    quest_step__quest=quest,
+                                                                                    completed=False).count() == 0
                     if all_steps_completed:
                         quest_progress.completed = True
                     else:
@@ -320,6 +318,7 @@ class CharacterQuestProgressManageView(View):
             quest_progress.save()
 
         return redirect('character-progress-manage', character_id=character.id)
+
 
 @method_decorator(login_required, name='dispatch')
 class CharacterQuestProgressView(View):
@@ -345,6 +344,7 @@ class CharacterQuestProgressView(View):
             'quest_completed_dict': quest_completed_dict,
         })
 
+
 class CommentUpdateView(LoginRequiredMixin, View):
     def get(self, request, pk):
         comment = get_object_or_404(Comment, pk=pk, user=request.user)
@@ -360,6 +360,7 @@ class CommentUpdateView(LoginRequiredMixin, View):
             return redirect('quest_detail', pk=comment.quest.pk)
         return render(request, 'progres_tracker/comment_form.html', {'form': form, 'comment': comment})
 
+
 class CommentDeleteView(LoginRequiredMixin, View):
     def get(self, request, pk):
         comment = get_object_or_404(Comment, pk=pk, user=request.user)
@@ -372,13 +373,16 @@ class CommentDeleteView(LoginRequiredMixin, View):
         messages.success(request, 'Comment deleted successfully')
         return redirect('quest_detail', pk=quest_pk)
 
+
 def quest_search(request):
     query = request.GET.get('q', '')
     quests = Quest.objects.filter(name__icontains=query) if query else Quest.objects.all()
     html = render_to_string('progres_tracker/partials/quest_list.html', {'quests': quests}, request=request)
     return JsonResponse({'html': html})
+
+
 def character_search(request):
     query = request.GET.get('q', '')
-    characters = Character.objects.filter(name__icontains=query) if query else Character.objects.all()
+    characters = Character.objects.filter(name__icontains=query)
     html = render_to_string('progres_tracker/partials/character_list.html', {'characters': characters})
     return JsonResponse({'html': html})

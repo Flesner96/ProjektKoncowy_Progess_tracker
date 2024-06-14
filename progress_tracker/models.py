@@ -16,7 +16,7 @@ class Quest(models.Model):
         return self.name
 
 class Character(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     quests = models.ManyToManyField(Quest, through='CharacterQuestProgress')

@@ -2,14 +2,29 @@
 
 {% block content %}
     {% include "top_header.html" %}
-<h2>Delete Character</h2>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <div class="alert alert-warning">
-        <strong>Warning!</strong> Are you sure you want to delete your character? This action cannot be undone.
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            {% include 'sidebar.html' %}
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-8 px-md-4">
+                <div class="container mt-5">
+                    <h2>Delete Character</h2>
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <div class="alert alert-warning">
+                            <strong>Warning!</strong> Are you sure you want to delete your character? This action cannot be undone.
+                        </div>
+                        <button type="submit" class="btn btn-danger btn-block">Yes, delete</button>
+                    </form>
+                        <a class="btn btn-primary btn-block mt-3" href="{% url 'character_list' %}">No, take me back</a>
+                </div>
+            </main>
+
+            <!-- Right margin -->
+            <div class="col-md-2 d-none d-md-block bg-light"></div>
+        </div>
     </div>
-    <button type="submit" class="btn btn-danger">Yes, delete</button>
-    <a class="btn btn-secondary" href="{% url 'character_list' %}">No, take me back</a>
-</form>
 {% endblock %}

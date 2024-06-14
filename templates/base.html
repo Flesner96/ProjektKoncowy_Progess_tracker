@@ -21,7 +21,7 @@
         <div>
             {% block content %}
                 <div class="login-container">
-                    <form method="POST" action="{% url 'login' %}">
+                    <form method="post" action="{% url 'login' %}" autocomplete="on">
                         {% csrf_token %}
                         <div class="form-group">
                             <label for="username">Username:</label>

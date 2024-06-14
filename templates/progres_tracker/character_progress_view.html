@@ -2,25 +2,39 @@
 {% load custom_filters %}
 {% block content %}
     {% include "top_header.html" %}
-    <h2>Progress for {{ character.name }}</h2>
-    <div>
-        {% for quest in quests %}
-            <h3>{{ quest.name }}</h3>
-            <p>{{ quest.description }}</p>
-            <input type="checkbox" name="quest_completed_{{ quest.id }}" id="quest_completed_{{ quest.id }}" {% if quest_completed_dict|get_item:quest.id %}checked{% endif %} disabled> Mark whole quest as completed
-            {% if quest.queststep_set.all %}
-                <ul>
-                    {% for step in quest.queststep_set.all %}
-                        <li>
-                            <input type="checkbox" name="completed_{{ step.id }}" id="completed_{{ step.id }}" {% if progress_dict|get_item:step.id %}checked{% endif %} disabled>
-                            <label for="completed_{{ step.id }}">{{ step.name }}: {{ step.description }}</label>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No steps available for this quest.</p>
-            {% endif %}
-        {% endfor %}
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            {% include 'sidebar.html' %}
+
+            <!-- Main content -->
+            <main class="col-md-7 ms-sm-auto col-lg-8 px-md-4">
+                <div class="mt-5">
+                    <h2>Progress for {{ character.name }}</h2>
+                    <div>
+                        {% for quest in quests %}
+                            <h3>{{ quest.name }}</h3>
+                            <p>{{ quest.description }}</p>
+                            <input type="checkbox" name="quest_completed_{{ quest.id }}" id="quest_completed_{{ quest.id }}" {% if quest_completed_dict|get_item:quest.id %}checked{% endif %} disabled> Mark whole quest as completed
+                            {% if quest.queststep_set.all %}
+                                <ul>
+                                    {% for step in quest.queststep_set.all %}
+                                        <li>
+                                            <input type="checkbox" name="completed_{{ step.id }}" id="completed_{{ step.id }}" {% if progress_dict|get_item:step.id %}checked{% endif %} disabled>
+                                            <label for="completed_{{ step.id }}">{{ step.name }}: {{ step.description }}</label>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p>No steps available for this quest.</p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <a href="{% url 'character_list' %}" class="btn btn-primary mt-3">Back to Character List</a>
+                </div>
+            </main>
+            <!-- Right margin -->
+            <div class="col-md-2 d-none d-md-block bg-light"></div>
+        </div>
     </div>
-    <a href="{% url 'character_list' %}" class="btn btn-default">Back to Character List</a>
 {% endblock %}

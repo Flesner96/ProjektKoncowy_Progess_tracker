@@ -7,11 +7,11 @@
     </div>
     <div class="nav-right">
         {% if user.is_authenticated %}
-            <span>Witaj {{ user }}</span>
-            <a href="{% url 'logout' %}">wyloguj</a>
+            <span>Welcome {{ user }}</span>
+            <a href="{% url 'logout' %}">Logout</a>
         {% else %}
-            <a href="{% url 'register' %}">zarejestruj</a>
-            <a href="{% url 'login' %}">zaloguj</a>
+            <a href="{% url 'register' %}">Register</a>
+            <a href="{% url 'login' %}">Login</a>
         {% endif %}
     </div>
 </div>

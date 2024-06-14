@@ -1,26 +1,37 @@
 {% extends 'dashboard.html' %}
 {% block content %}
     {% include "top_header.html" %}
-    <h2>Character details: {{ character.name }}</h2>
-    <p>Name: {{ character.name }}</p>
-    <p>Game: {{ character.game }}</p>
-    <p>User: {{ character.user }}</p>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            {% include 'sidebar.html' %}
 
-    {% if is_owner %}
-        <a href="{% url 'character-progress-manage' character.id %}" class="btn btn-primary">Manage Progress</a>
-    {% else %}
-        <a href="{% url 'character-progress-view' character.id %}" class="btn btn-primary">View Progress</a>
-    {% endif %}
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-8 px-md-4">
+                <div class="container mt-5">
+                    <h2>Character details: {{ character.name }}</h2>
+                    <p>Game: {{ character.game }}</p>
+                    <p>User: {{ character.user }}</p>
 
-    {% if error %}
-        <script>
-            alert('{{ error }}');
-        </script>
-    {% endif %}
+                    {% if is_owner %}
+                        <a href="{% url 'character-progress-manage' character.id %}" class="btn btn-primary">Manage Progress</a>
+                    {% else %}
+                        <a href="{% url 'character-progress-view' character.id %}" class="btn btn-primary">View Progress</a>
+                    {% endif %}
 
-    <a href="{% url 'character_delete' character.id %}">Remove</a>
+                    {% if error %}
+                        <script>
+                            alert('{{ error }}');
+                        </script>
+                    {% endif %}
 
-    <a href="{% url 'character_list' %}">
-        <button type="button">Back</button>
-    </a>
+                    <a href="{% url 'character_delete' character.id %}" class="btn btn-danger">Remove</a>
+                    <a href="{% url 'character_list' %}" class="btn btn-primary">Back</a>
+                </div>
+            </main>
+
+            <!-- Right margin -->
+            <div class="col-md-2 d-none d-md-block bg-light"></div>
+        </div>
+    </div>
 {% endblock %}

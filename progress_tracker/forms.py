@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 
 from .models import Game, Quest, Character, QuestStep, Comment, CharacterQuestProgress, CharacterQuestStepProgress
 
@@ -19,6 +20,12 @@ class CharacterForm(forms.ModelForm):
     class Meta:
         model = Character
         fields = ['name', 'game']
+
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        if not name[0].isupper():
+            raise ValidationError('The first letter of the name must be uppercase.')
+        return name
 
 
 class QuestStepForm(forms.ModelForm):

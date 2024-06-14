@@ -26,7 +26,6 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Characters</h5>
-                                <p class="card-text">You have {{ character_count }} characters.</p>
                                 <a href="{% url 'character_list' %}" class="btn btn-primary">View Characters</a>
                                 <a href="{% url 'character_create' %}" class="btn btn-secondary">Add Character</a>
                             </div>
@@ -36,9 +35,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Quests</h5>
-                                <p class="card-text">You have {{ quest_count }} quests.</p>
                                 <a href="{% url 'quest_list' %}" class="btn btn-primary">View Quests</a>
-                                <a href="{% url 'add_quest' %}" class="btn btn-secondary">Add Quest</a>
                             </div>
                         </div>
                     </div>
@@ -49,7 +46,7 @@
             </main>
 
             <!-- Right margin -->
-            <div class="col-md-2 d-none d-md-block bg-light"></div>
+            <div class="col-md-2 d-none d-md-block right-margin"></div>
         </div>
     </div>
 {% endblock %}

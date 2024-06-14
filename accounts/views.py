@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib import messages
@@ -16,15 +17,19 @@ class CreateUserView(View):
         if password != "" and password == password2:
             u = User(username=username)
             u.set_password(password)
-            u.save()
-            messages.success(request, 'Successfully created user')
-            return redirect('base')
-        return render(request, "accounts/create_user.html", {"error": "Passwords do not match"})
+            try:
+                u.save()
+                messages.success(request, 'Successfully created user')
+                return redirect('base')
+            except IntegrityError:
+                return render(request, "accounts/create_user.html", {"error": "Username already taken"})
+        else:
+            return render(request, "accounts/create_user.html", {"error": "Passwords do not match"})
 
 
 class LoginView(View):
     def get(self, request):
-        return render(request, "accounts/login.html")
+        return render(request, "base.html")
 
     def post(self, request):
         username = request.POST.get('username')
@@ -36,7 +41,7 @@ class LoginView(View):
             redirect_url = request.GET.get('next', 'dashboard')
             return redirect(redirect_url)
         else:
-            return render(request, "accounts/login.html", {'error': 'Invalid username or password'})
+            return render(request, "base.html", {'error': 'Invalid username or password'})
 
 class LogoutView(View):
     def get(self, request):

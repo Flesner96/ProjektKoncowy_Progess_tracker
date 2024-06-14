@@ -1,16 +1,31 @@
 {% extends 'dashboard.html' %}
 
 {% block content %}
-<h2>Search results</h2>
-{% if quests %}
-<ul>
-    {% for quest in quest_list %}
-    {% if search_input in quest.name %}
-    <li>{{ quest.name }}</li>
-    {% endif %}
-    {% endfor %}
-</ul>
-{% else %}
-<p>No quests found.</p>
-{% endif %}
+    {% include "top_header.html" %}
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            {% include 'sidebar.html' %}
+
+            <!-- Main content -->
+            <main class="col-md-7 ms-sm-auto col-lg-8 px-md-4">
+                <div class="mt-5">
+                    <h2>Search results</h2>
+                    {% if quests %}
+                        <ul>
+                            {% for quest in quest_list %}
+                                {% if search_input in quest.name %}
+                                    <li>{{ quest.name }}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No quests found.</p>
+                    {% endif %}
+                </div>
+            </main>
+            <!-- Right margin -->
+            <div class="col-md-2 d-none d-md-block bg-light"></div>
+        </div>
+    </div>
 {% endblock %}
