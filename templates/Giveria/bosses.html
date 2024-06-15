@@ -59,8 +59,7 @@
                     <h5 class="modal-title" id="bossModalLabel">Next Boss Fight</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    Next fight with boss <span id="bossName"></span> will be available on <span id="bossTime"></span>.
+                <div class="modal-body" id="bossModalBody">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -79,13 +78,8 @@
             width: 100%;
             max-width: 400px; /* Same as the select box */
         }
-        .right-margin {
-            min-height: 100vh; /* Ensures the right margin spans the full viewport height */
-            background-color: #f8f9fa; /* Adjust the background color as needed */
-        }
     </style>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const cooldowns20h = {
             "Lost Brain": 20,
@@ -111,12 +105,12 @@
             const selectedBoss = document.getElementById('boss').value;
 
             if (isNaN(selectedDateTime.getTime())) {
-                alert('Please select proper date and hour.');
+                showModal('Error', 'Please select proper date and hour.');
                 return;
             }
 
             if (selectedBoss === '') {
-                alert('Please select a Boss.');
+                showModal('Error', 'Please select a Boss.');
                 return;
             }
 
@@ -125,10 +119,13 @@
             const cooldownHours = cooldowns[selectedBoss];
             const nextFightTime = new Date(selectedDateTime.getTime() + cooldownHours * 60 * 60 * 1000);
 
-            document.getElementById('bossName').textContent = selectedBoss;
-            document.getElementById('bossTime').textContent = nextFightTime.toLocaleString();
+            showModal('Next Boss Fight', `Next fight with boss ${selectedBoss} will be available on ${nextFightTime.toLocaleString()}.`);
+        }
 
-            var bossModal = new bootstrap.Modal(document.getElementById('bossModal'), {});
+        function showModal(title, message) {
+            document.getElementById('bossModalLabel').innerText = title;
+            document.getElementById('bossModalBody').innerText = message;
+            var bossModal = new bootstrap.Modal(document.getElementById('bossModal'));
             bossModal.show();
         }
 

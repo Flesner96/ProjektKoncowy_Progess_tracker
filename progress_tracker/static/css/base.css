@@ -239,3 +239,11 @@ button[type="submit"]:hover {
 .accordion-button::after {
     display: none;
 }
+.right-margin {
+    min-height: 100vh; /* Ensures the right margin spans the full viewport height */
+    background-color: #f8f9fa; /* Adjust the background color as needed */
+    position: relative; /* Make sure it's positioned relative to the content */
+    top: 0; /* Adjust if necessary to fit below the navbar */
+    padding-top: 56px; /* Adjust padding to the height of the navbar */
+    z-index: 0; /* Ensure it stays behind other content */
+}
