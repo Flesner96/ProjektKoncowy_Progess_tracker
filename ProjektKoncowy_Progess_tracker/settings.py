@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "accounts.apps.AccountsConfig",
     "progress_tracker.apps.ProgressTrackerConfig",
-
+    'pytest'
 
 ]
 

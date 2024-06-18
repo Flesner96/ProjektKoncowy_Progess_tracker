@@ -89,6 +89,7 @@ def character_delete(request, id):
 
     return render(request, 'progres_tracker/character_delete_confirm.html', {'char': char_to_delete})
 
+
 def quest_list(request):
     quests = Quest.objects.all()
     return render(request, 'progres_tracker/quest_list.html', {'quests': quests})
@@ -157,7 +158,6 @@ class GameDeleteView(DeleteView):
 
 @login_required
 def CharacterListView(request):
-    # Get all characters, ordering by whether the user is the owner
     characters = Character.objects.annotate(
         is_owner=Case(
             When(user=request.user, then=1),
@@ -382,7 +382,6 @@ def quest_search(request):
     return JsonResponse({'html': html})
 
 
-
 def character_search(request):
     query = request.GET.get('q', '')
     characters = Character.objects.filter(name__icontains=query)
@@ -398,6 +397,6 @@ def quest_filter(request):
         quests = Quest.objects.filter(game__name__icontains=game)
     context = {
         'quests': quests,
-        'user': request.user,  # Ensure user context is passed
+        'user': request.user,
     }
     return JsonResponse({'html': render_to_string('progres_tracker/partials/quest_list.html', context)})
